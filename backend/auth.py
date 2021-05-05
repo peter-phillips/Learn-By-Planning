@@ -48,7 +48,7 @@ def signup_post():
 
     user = users.find_one({"email" : email}) # if this returns a user, then the email already exists in database
 
-    if user is None: # if a user is found, we want to redirect back to signup page so user can try again  
+    if user is not None: # if a user is found, we want to redirect back to signup page so user can try again  
         flash('Email address already exists')
         return redirect(url_for('auth.signup'))
 

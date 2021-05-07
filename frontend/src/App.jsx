@@ -1,9 +1,10 @@
+import React from 'react';
 import './App.css';
-import Header from './Header.js';
-import Today from './Today.js';
-import List from './List.js';
-import Calendar from './Calendar.js';
-import {BrowserRouter, Route , Switch} from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import Header from './Header';
+import Today from './Today';
+import List from './List';
+import Calendar from './Calendar';
 
 function App() {
   return (
@@ -12,13 +13,13 @@ function App() {
         <Header />
         <main>
           <Switch>
-            <Route path='/Calendar'>
+            <Route path="/Calendar">
               <Calendar />
             </Route>
-            <Route path='/List'>
+            <Route path="/List">
               <List />
             </Route>
-            <Route path='/'>
+            <Route path="/">
               <Today />
             </Route>
           </Switch>

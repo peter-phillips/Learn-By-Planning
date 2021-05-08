@@ -1,0 +1,37 @@
+.userInput{
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 459px;
+    height: 69px;
+    background-color:#E4E1D1;
+    border-radius: 65px;
+    border: none;
+    color:black;
+    font-size: 22px;
+    text-indent:20px;
+    outline: none;
+}
+
+.userInput::placeholder{
+    color:black;
+    font-size: 22px;
+    text-indent:20px;
+}
+
+.button{
+    display: flex;
+    justify-content: center;   
+}
+
+.submitNew{
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color:#E4E1D1;
+    border-radius: 65px;
+    border: none;
+    color:black;
+    outline: none;
+    justify-content: center;
+}

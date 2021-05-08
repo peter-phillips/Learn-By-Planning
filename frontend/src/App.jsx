@@ -19,7 +19,7 @@ function App() {
             <Route path="/List">
               <List />
             </Route>
-            <Route path="/">
+            <Route path="/Today">
               <Today />
             </Route>
           </Switch>

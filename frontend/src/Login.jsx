@@ -1,3 +1,8 @@
+/* eslint-disable brace-style */
+/* eslint-disable consistent-return */
+/* eslint-disable no-console */
+/* eslint-disable no-shadow */
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import axios from 'axios';
 import Form from './Form';

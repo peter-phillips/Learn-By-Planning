@@ -1,8 +1,9 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required
 from dataBase import DataBase
 from User import User
+import sys
 
 
 auth = Blueprint('auth', __name__)
@@ -11,11 +12,10 @@ users = db.getUsers()
 
 
 @auth.route('/login', methods=['POST'])
-def login_post(User):
-
-    email = User['email']
-    password = User['password']
-
+def login_post():
+    args = request.get_json()
+    email = args.get('email')
+    password = args.get('password')
     user = users.find_one({"email" : email})
 
     # check if user actually exists
@@ -36,11 +36,12 @@ def login_post(User):
     return resp
 
 @auth.route('/signup', methods=['POST'])
-def signup_post(User):
-
-    email = User['email']
-    name = User['name']
-    password = User['password']
+def signup_post():
+    args = request.get_json()
+    email = args.get('email')
+    password = args.get('password')
+    name = args.get('name')
+   
 
     user = users.find_one({"email" : email}) # if this returns a user, then the email already exists in database
 

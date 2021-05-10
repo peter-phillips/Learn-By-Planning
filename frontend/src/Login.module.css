@@ -19,6 +19,13 @@
     bottom: 0px;
 }
 
+.error{
+    display: flex;
+    justify-content: center;
+    color:red;
+    font-size: 24px;
+}
+
 .lb{
     margin-left: 10px;
     color:white;

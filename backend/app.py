@@ -1,12 +1,14 @@
 from flask import Flask
 from flask_login import LoginManager
 from dataBase import DataBase
+from flask_cors import CORS
 from User import User
 
 
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
 
     app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
     

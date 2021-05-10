@@ -1,10 +1,9 @@
-import React, { useState, useAlert } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import CreateForm from './CreateForm';
 import styles from './Login.module.css';
-
+/* eslint-disable */
 function CreateNew() {
-  const alert = useAlert();
   const [user, setUser] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -24,7 +23,6 @@ function CreateNew() {
   function createUser(user) {
     makePostCall(user).then((result) => {
       if (result) {
-        alert.show('Account Creation Successful');
         return true; // Reroute to Login
       }
       setErrorMessage('E-mail is already taken.');

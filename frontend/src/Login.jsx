@@ -1,14 +1,12 @@
-import { useHistory } from 'react-router-dom';
 import React, { useState } from 'react';
 import axios from 'axios';
 import Form from './Form';
 import styles from './Login.module.css';
 
+/* eslint-disable */
 function Login() {
-  const alert = useAlert();
   const [user, setUser] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
-  const history = useHistory();
 
   async function makePostCall(user) {
     try {

@@ -4,20 +4,20 @@ import styles from './Form.module.css';
 function Form(props) {
   const [user, setUser] = useState(
     {
-      name: '',
-      pass: '',
+      email: '',
+      password: '',
     },
   );
 
   function handleChange(event) {
     const { name, value } = event.target;
-    if (name === 'pass') setUser({ name: user.name, pass: value });
-    else setUser({ name: value, pass: user.pass });
+    if (name === 'password') setUser({ email: user.email, password: value });
+    else setUser({ email: value, password: user.password });
   }
 
   function submitForm() {
     props.handleSubmit(user);
-    setUser({ name: '', pass: '' });
+    setUser({ email: '', password: '' });
   }
 
   function handleKeyDown(event) {
@@ -34,11 +34,11 @@ function Form(props) {
         <input
           className={styles.userInput}
           type="text"
-          name="name"
-          id="name"
-          value={user.name}
+          name="email"
+          id="email"
+          value={user.email}
           onChange={handleChange}
-          placeholder="E-Mail"
+          placeholder="Enter E-Mail"
           onKeyDown={handleKeyDown}
         />
       </div>
@@ -46,11 +46,11 @@ function Form(props) {
         <input
           className={styles.userInput}
           type="text"
-          name="pass"
-          id="pass"
-          value={user.pass}
+          name="password"
+          id="password"
+          value={user.password}
           onChange={handleChange}
-          placeholder="Password"
+          placeholder="Enter Password"
           onKeyDown={handleKeyDown}
         />
       </div>

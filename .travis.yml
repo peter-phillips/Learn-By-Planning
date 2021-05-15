@@ -5,8 +5,7 @@ python:
 install:
   - pip install -r requirements.txt
 script:
-  - coverage run -m pytest -v
-  - coverage report -m --include="User.py"
+  - pytest test_user.py
 after_install:
  - cd backend
 

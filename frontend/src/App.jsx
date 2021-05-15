@@ -6,7 +6,7 @@ import CreateNew from './CreateNew';
 
 function App() {
   return (
-    <Login />
+    <CreateNew />
   );
 }
 

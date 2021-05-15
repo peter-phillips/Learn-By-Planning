@@ -1,7 +1,13 @@
 language: python
+python:
+  - "3.6"
+  - "3.7"
+install:
+  - pip install -r requirements.txt
+script:
+  - coverage run -m pytest -v
+  - coverage report -m --include="User.py"
 before_install:
  - cd backend
- - pip install flask
- - pip install pytest
- - pip install pymongo
+
  

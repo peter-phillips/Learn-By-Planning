@@ -1,4 +1,7 @@
 language: python
 before_install:
  - cd backend
+ - pip install flask
+ - pip install pytest
+ - pip install pymongo
  

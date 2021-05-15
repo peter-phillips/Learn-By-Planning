@@ -7,7 +7,7 @@ install:
 script:
   - coverage run -m pytest -v
   - coverage report -m --include="User.py"
-before_install:
+after_install:
  - cd backend
 
  

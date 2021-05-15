@@ -1,5 +1,4 @@
 from flask_login import UserMixin
-import itertools
 
 class User(UserMixin):
 

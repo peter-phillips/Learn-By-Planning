@@ -30,5 +30,8 @@ def create_app():
     from auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
 
+    from taskController import task as task_blueprint
+    app.register_blueprint(task_blueprint)
+
     return app
     

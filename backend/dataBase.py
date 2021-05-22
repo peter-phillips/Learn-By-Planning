@@ -1,4 +1,4 @@
-import dns
+
 import os
 from dotenv import load_dotenv
 import pymongo
@@ -12,3 +12,6 @@ class DataBase:
     
     def getUsers(self):
         return self.db.Users
+    
+    def getTasks(self):
+        return self.db.Tasks

@@ -19,12 +19,12 @@ def login_post():
     user = users.find_one({"email" : email})
 
     # check if user actually exists
-    # take the user supplied password, hash it, and compare it to the hashed password in database
     if user is None:
         resp = jsonify(success=False)
         resp.status_code = 403 #Wrong username/password
         return resp # if user doesn't exist or password is wrong, reload the page
     user = User(user["name"], user["email"], user["password"], user["id"])
+     # take the user supplied password, hash it, and compare it to the hashed password in database
     if not(check_password_hash(user.password, password)):
         resp = jsonify(success=False)
         resp.status_code = 403 #Wrong username/password

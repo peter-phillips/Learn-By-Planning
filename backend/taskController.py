@@ -89,10 +89,10 @@ def taskPut():
     name = args.get('name')
     desc = args.get('desc')
     clas = args.get('class')
-    dueDate = args.get('dueDate')
-    targetDate = args.get('targetDate')
+    dueDate = datetime.strptime(args.get('dueDate'), '%m-%d-%Y %I:%M %p')
+    targetDate = datetime.strptime(args.get('targetDate'), '%m-%d-%Y %I:%M %p')
     remind = args.get('remind')
-    remindDate = args.get('remindDate')
+    remindDate = datetime.strptime(args.get('remindDate'), '%m-%d-%Y %I:%M %p')
     tasks.update_one({"taskId" : taskId},
                         {"$set": {
                             "name" : name,

@@ -1,6 +1,6 @@
 from datetime import datetime, date
 from flask import Blueprint, jsonify, request
-import flask_login
+from flask_login import current_user
 from dataBase import DataBase
 from Task import Task
 import sys
@@ -26,7 +26,7 @@ def taskPost():
     new_id = tasks.find().sort([("taskId", -1)]).limit(1)[0]["taskId"]
     # user = flask_login.current_user
 
-    task = Task(new_id + 1, 1, name, desc, clas, 
+    task = Task(new_id + 1, current_user.uid, name, desc, clas, 
             datetime.strptime(dueDate, '%m-%d-%Y %I:%M %p'), 
             datetime.strptime(targetDate, '%m-%d-%Y %I:%M %p'), 
             remind, datetime.strptime(remindDate, '%m-%d-%Y %I:%M %p'))
@@ -62,14 +62,14 @@ def taskPut():
         resp = jsonify(success=False)
         resp.status_code = 400 #bad request
         return resp
-    
+
 @task.route('/Today', methods=['GET'])
 def todayGet():
     current = datetime.now()
     start = datetime(current.year, current.month, current.day)
     end = datetime(current.year, current.month, current.day, hour=23, minute=59, second=59)
-    today_tasks = tasks.find({"dueDate" : {"$gte" : start , "$lte" : end}})
-    target_tasks = tasks.find({"targetDate" : {"$gte" : start , "$lte" : end}})
+    today_tasks = tasks.find({"$and": [{"dueDate" : {"$gte" : start , "$lte" : end}}, {"userId" : current_user.uid}]})
+    target_tasks = tasks.find({"$and": [{"targetDate" : {"$gte" : start , "$lte" : end}}, {"userId" : current_user.uid}]})
     ltasks = list(today_tasks)
     ltarget = list(target_tasks)
     tempIds = []

@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, current_user
 from dataBase import DataBase
 from User import User
 import sys
@@ -61,9 +61,12 @@ def signup_post():
     return resp
 
 @auth.route('/login', methods=['GET'])
-@login_required
 def logout():
-    logout_user()
-    resp = jsonify(success=True)
-    resp.status_code = 200 #OK http
+    if current_user.is_authenticated:
+        logout_user()
+        resp = jsonify(success=True)
+        resp.status_code = 200 #OK http
+        return resp
+    resp = jsonify(success=False)
+    resp.status_code = 304 #Http not modified
     return resp

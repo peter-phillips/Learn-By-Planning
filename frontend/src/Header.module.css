@@ -1,7 +1,6 @@
 .header {
     display: flex;
     flex-direction: column;
-
     background-color: #154734;
     color: white;
 }
@@ -25,6 +24,20 @@
     text-decoration: none;
 }
 
+.title{
+    display: flex;
+    align-self: center;
+    flex-direction: row;
+    width: auto;
+}
+
+.logbutton{
+    display: flex;
+    align-self: center;
+    justify-self: end;
+    flex-wrap: wrap;
+}
+
 .tabActive, .link:hover {
     display: flex;
     flex: 1;
@@ -34,4 +47,3 @@
     text-decoration: none;
     background-color: #F2C75C;
 }
-

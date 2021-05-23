@@ -60,7 +60,7 @@ def signup_post():
     resp.status_code = 201 #Created http
     return resp
 
-@auth.route('/logout')
+@auth.route('/login', methods=['GET'])
 @login_required
 def logout():
     logout_user()

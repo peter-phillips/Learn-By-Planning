@@ -1,5 +1,5 @@
-import dns
 import os
+import dns
 from dotenv import load_dotenv
 import pymongo
 

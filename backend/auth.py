@@ -62,6 +62,7 @@ def signup_post():
 
 @auth.route('/login', methods=['GET'])
 def logout():
+    # if someone logged in
     if current_user.is_authenticated:
         logout_user()
         resp = jsonify(success=True)

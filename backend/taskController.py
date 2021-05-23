@@ -11,7 +11,14 @@ db = DataBase()
 tasks = db.getTasks()
 
 @task.route('/Today', methods=['POST'])
+@task.route('/List', methods=['POST'])
+@task.route('/Calendar', methods=['POST'])
 def taskPost():
+    # if no one logged in
+    if not(current_user.is_authenticated):
+        resp = jsonify(success=False)
+        resp.status_code = 401 #Unauthorized
+        return resp
     #grabs args from post
     args = request.get_json()
     name = args.get('name')
@@ -38,7 +45,14 @@ def taskPost():
     return resp
 
 @task.route('/Today', methods=['DELETE'])
+@task.route('/List', methods=['DELETE'])
+@task.route('/Calendar', methods=['DELETE'])
 def taskDelete():
+    # if no one logged in
+    if not(current_user.is_authenticated):
+        resp = jsonify(success=False)
+        resp.status_code = 401 #Unauthorized
+        return resp
     args = request.get_json()
     taskId = args.get('taskId')
     task = tasks.find_one({"taskId" : taskId})
@@ -54,7 +68,14 @@ def taskDelete():
     
 
 @task.route('/Today', methods=['PUT'])
+@task.route('/List', methods=['PUT'])
+@task.route('/Calendar', methods=['PUT'])
 def taskPut():
+    # if no one logged in
+    if not(current_user.is_authenticated):
+        resp = jsonify(success=False)
+        resp.status_code = 401 #Unauthorized
+        return resp
     args = request.get_json()
     taskId = args.get('taskId')
     task = tasks.find_one({"taskId" : taskId})
@@ -65,6 +86,11 @@ def taskPut():
 
 @task.route('/Today', methods=['GET'])
 def todayGet():
+    # if no one logged in
+    if not(current_user.is_authenticated):
+        resp = jsonify(success=False)
+        resp.status_code = 401 #Unauthorized
+        return resp
     current = datetime.now()
     start = datetime(current.year, current.month, current.day)
     end = datetime(current.year, current.month, current.day, hour=23, minute=59, second=59)

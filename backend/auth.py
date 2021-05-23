@@ -45,7 +45,7 @@ def signup_post():
 
     user = users.find_one({"email" : email}) # if this returns a user, then the email already exists in database
 
-    if user is not None: # User with email already exists
+    if len(list(user)) != 0: # User with email already exists
         resp = jsonify(success=False)
         resp.status_code = 409 #conflict http
         return resp
@@ -60,7 +60,7 @@ def signup_post():
     resp.status_code = 201 #Created http
     return resp
 
-@auth.route('/logout')
+@auth.route('/login', methods=['GET'])
 @login_required
 def logout():
     logout_user()

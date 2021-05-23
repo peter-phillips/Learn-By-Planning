@@ -10,6 +10,7 @@ task = Blueprint('task', __name__)
 db = DataBase()
 tasks = db.getTasks()
 
+#Create a task
 @task.route('/Today', methods=['POST'])
 @task.route('/List', methods=['POST'])
 @task.route('/Calendar', methods=['POST'])
@@ -44,6 +45,7 @@ def taskPost():
     resp.status_code = 201 #created http code
     return resp
 
+# Delete a task
 @task.route('/Today', methods=['DELETE'])
 @task.route('/List', methods=['DELETE'])
 @task.route('/Calendar', methods=['DELETE'])
@@ -66,7 +68,7 @@ def taskDelete():
     resp.status_code = 200 #OK
     return resp
     
-
+#Update a task
 @task.route('/Today', methods=['PUT'])
 @task.route('/List', methods=['PUT'])
 @task.route('/Calendar', methods=['PUT'])
@@ -114,3 +116,18 @@ def todayGet():
     resp = jsonify(success=True, tasks=ltasks)
     resp.status_code = 201
     return resp
+
+@task.route('/List', methods=['GET'])
+def listGet():
+    if not(current_user.is_authenticated):
+        resp = jsonify(success=False)
+        resp.status_code = 401 #Unauthorized
+        return resp
+    listTasks = list(tasks.find({"userId" : current_user.uid}))
+    for i in listTasks:
+        i.pop("_id")
+    listTasks.sort(key=lambda x: x.get('dueDate'))
+    resp = jsonify(success=True, tasks=listTasks)
+    resp.status_code = 201
+    return resp
+    

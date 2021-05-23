@@ -11,7 +11,7 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
 
-    app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
+    app.config['SECRET_KEY'] = '39d76dff06e14b0b9c7bedca6f76e938'
     
     db = DataBase()
     users = db.getUsers()

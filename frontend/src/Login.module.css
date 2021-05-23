@@ -36,7 +36,7 @@
     color:#BD8B13;
 }
 
-body{
+.loginBody{
     background-image: url("./cpuu.jpg");
     background-position: center;
     background-size: cover;

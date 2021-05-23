@@ -68,7 +68,7 @@ def taskDelete():
     resp.status_code = 200 #OK
     return resp
     
-#Update a task
+# Update a task
 @task.route('/Today', methods=['PUT'])
 @task.route('/List', methods=['PUT'])
 @task.route('/Calendar', methods=['PUT'])
@@ -85,6 +85,27 @@ def taskPut():
         resp = jsonify(success=False)
         resp.status_code = 400 #bad request
         return resp
+    
+    name = args.get('name')
+    desc = args.get('desc')
+    clas = args.get('class')
+    dueDate = args.get('dueDate')
+    targetDate = args.get('targetDate')
+    remind = args.get('remind')
+    remindDate = args.get('remindDate')
+    tasks.update_one({"taskId" : taskId},
+                        {"$set": {
+                            "name" : name,
+                            "desc" : desc,
+                            "class" : clas,
+                            "dueDate" : dueDate,
+                            "targetDate" : targetDate,
+                            "remind" : remind,
+                            "remindDate" : remindDate
+                        }})
+    resp = jsonify(success=True)
+    resp.status_code = 200 #OK
+    return resp
 
 @task.route('/Today', methods=['GET'])
 def todayGet():

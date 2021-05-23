@@ -3,3 +3,7 @@
     grid-template-columns: 75% 25%;
     background-color: rgb(255, 253, 208);
   }
+
+  .todayBody{
+    background-image: none;
+  }

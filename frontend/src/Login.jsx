@@ -1,12 +1,27 @@
-import React, { useState } from 'react';
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable react/jsx-one-expression-per-line */
+/* eslint-disable no-shadow */
+/* eslint-disable no-unused-vars */
+import React, { useState, useContext, useEffect } from 'react';
+import { Link, Switch } from 'react-router-dom';
 import axios from 'axios';
 import Form from './Form';
+import authContext from './authContext';
 import styles from './Login.module.css';
 
-/* eslint-disable */
 function Login() {
   const [user, setUser] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
+  const { setAuth } = useContext(authContext);
+
+  async function checkLogin() {
+    try {
+      const response = await axios.get('http://localhost:5000/login');
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 
   async function makePostCall(user) {
     try {
@@ -24,25 +39,31 @@ function Login() {
   function authenticateUser(user) {
     makePostCall(user).then((result) => {
       if (result) {
-        return true; // Reroute user to today view
+        setAuth(true);
       }
-      setErrorMessage('E-mail and password combination is invalid.');
     });
   }
 
-  return (
-    <div className={styles.overlay}>
-      <div className={styles.content}>
-        <h1 className={styles.name}>Login</h1>
-        <Form handleSubmit={authenticateUser} />
-        {errorMessage && <div className={styles.error}> {errorMessage} </div>}
-      </div>
-      <div className={styles.title}>
-        <text className={styles.lb}>LEARN BY</text>
-        <text className={styles.plan}> PLANNING</text>
-      </div>
-    </div>
+  useEffect(() => {
+    checkLogin();
+  }, []);
 
+  return (
+    <body className={styles.loginBody}>
+      <div className={styles.overlay}>
+        <div className={styles.content}>
+          <h1 className={styles.name}>Login</h1>
+          <Form handleSubmit={authenticateUser} />
+          <Switch>
+            <Link to="/CreateNew"> Create New Account</Link>
+          </Switch>
+        </div>
+        <div className={styles.title}>
+          <text className={styles.lb}>LEARN BY</text>
+          <text className={styles.plan}> PLANNING</text>
+        </div>
+      </div>
+    </body>
   );
 }
 

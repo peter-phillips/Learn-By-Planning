@@ -34,17 +34,18 @@ function CreateNew() {
   }
 
   return (
-    <div className={styles.overlay}>
-      <div className={styles.content}>
-        <h1 className={styles.name}>New Account</h1>
-        <CreateForm handleSubmit={createUser} />
+    <body className={styles.loginBody}>
+      <div className={styles.overlay}>
+        <div className={styles.content}>
+          <h1 className={styles.name}>New Account</h1>
+          <CreateForm handleSubmit={createUser} />
+        </div>
+        <div className={styles.title}>
+          <text className={styles.lb}>LEARN BY</text>
+          <text className={styles.plan}> PLANNING</text>
+        </div>
       </div>
-      <div className={styles.title}>
-        <text className={styles.lb}>LEARN BY</text>
-        <text className={styles.plan}> PLANNING</text>
-      </div>
-    </div>
-
+    </body>
   );
 }
 

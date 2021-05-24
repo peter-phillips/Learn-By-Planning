@@ -13,7 +13,7 @@ class Task():
         if remind:
             self.remindDate = remindDate
         else:
-            self.remindDate = None
+            self.remindDate = remindDate
 
     def scheduleRemind(self):
         pass

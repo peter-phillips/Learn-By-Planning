@@ -23,6 +23,7 @@ function Today() {
   async function makePostCall(task) {
     try {
       const response = await axios.post('http://localhost:5000/Today', task);
+      console.log('posting -------');
       if (response.status === 201) {
         return true;
       }
@@ -34,6 +35,7 @@ function Today() {
   }
 
   function createTask(task) {
+    console.log('kjhdglsafjkol;gsafd');
     makePostCall(task).then((result) => {
       if (result) {
         // Update page with new task
@@ -49,7 +51,7 @@ function Today() {
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">New Task</DialogTitle>
           <DialogContent>
-            <form onSubmit={createTask}>
+            <form id="task-form" action="http://localhost:5000/Today" method="POST">
               <TextField
                 autoFocus
                 margin="dense"
@@ -59,13 +61,30 @@ function Today() {
                 type="text"
                 fullWidth
               />
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <DateTimePicker
+                  name="dueDate"
+                  label="Choose Due Date"
+                  format="MM-dd-yyyy hh:mm aa"
+                />
+                <DateTimePicker
+                  name="targetDate"
+                  label="Choose Target Date"
+                  format="MM-dd-yyyy hh:mm aa"
+                />
+                <DateTimePicker
+                  name="remindDate"
+                  label="Choose Remind Date"
+                  format="MM-dd-yyyy hh:mm aa"
+                />
+              </MuiPickersUtilsProvider>
             </form>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={createTask} color="primary">
+            <Button onClick={createTask} color="primary" form="task-form" type="submit">
               Create New Task
             </Button>
           </DialogActions>

@@ -18,5 +18,5 @@ class User(UserMixin):
         return False
 
     def get_id(self):
-        return self.uid
+        return str(self.uid).encode("utf-8").decode("utf-8")
     

@@ -19,13 +19,6 @@
     bottom: 0px;
 }
 
-.error{
-    display: flex;
-    justify-content: center;
-    color:red;
-    font-size: 24px;
-}
-
 .lb{
     margin-left: 10px;
     color:white;
@@ -35,7 +28,11 @@
     margin-left: 10px;
     color:#BD8B13;
 }
-
+.link{
+    text-decoration: none;
+    color: 'white';
+    font-size: 20px;
+}
 .loginBody{
     background-image: url("./cpuu.jpg");
     background-position: center;

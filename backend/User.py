@@ -1,22 +1,39 @@
-from flask_login import UserMixin
+from dataBase import DataBase
 
-class User(UserMixin):
 
-    def __init__(self, name, email, password, uid):
+class User():
+
+    instances = []
+
+    def __init__(self, id, name, email, password):
         self.name = name
         self.email = email
-        self.password = password
-        self.uid = uid
+        self._password = password
+        self.id = id
+        self.auth = True
+        User.instances.append(self)
+    
+    @property
+    def identity(self):
+        return self.id
+    
+    @property
+    def rolenames(self):
+        return []
+    
+    @property
+    def password(self):
+        return self._password
+    
+    @password.setter
+    def setPassword(self, password):
+        self._password = password
+    
+    @classmethod
+    def lookup(cls, username):
+        return [inst for inst in cls.instances if inst.email == username][0]
 
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        return str(self.uid).encode("utf-8").decode("utf-8")
+    @classmethod
+    def identify(cls, id):
+        return [inst for inst in cls.instances if inst.uid == id][0]
     

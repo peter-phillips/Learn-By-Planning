@@ -3,7 +3,9 @@ from flask import Blueprint, jsonify, request
 from flask_login import current_user
 from dataBase import DataBase
 from Task import Task
+import flask_praetorian
 import sys
+import app
 
 
 task = Blueprint('task', __name__)
@@ -14,14 +16,16 @@ tasks = db.getTasks()
 @task.route('/Today', methods=['POST'])
 @task.route('/List', methods=['POST'])
 @task.route('/Calendar', methods=['POST'])
+@flask_praetorian.auth_required
 def taskPost():
     # if no one logged in
-    if not(current_user.is_authenticated):
-        resp = jsonify(success=False)
-        resp.status_code = 401 #Unauthorized
-        return resp
-    #grabs args from post
+    # if not(current_user.is_authenticated):
+    #     resp = jsonify(success=False)
+    #     resp.status_code = 401 #Unauthorized
+    #     return resp
     args = request.form
+    # user = app.guard.get_user_from_registration_token(args.get('access_token'))
+    #grabs args from post
     name = args.get('name')
     desc = args.get('desc')
     clas = args.get('class')
@@ -29,12 +33,13 @@ def taskPost():
     targetDate = args.get('targetDate')
     remind = args.get('remind')
     remindDate = args.get('remindDate')
+    user = app.guard.get_user_from_registration_token(args.get('access_token'))
 
     #finds highest task id
     new_id = tasks.find().sort([("taskId", -1)]).limit(1)[0]["taskId"]
     # user = flask_login.current_user
 
-    task = Task(new_id + 1, 1, name, desc, clas, 
+    task = Task(new_id + 1, user.id, name, desc, clas, 
             datetime.strptime(dueDate, '%m-%d-%Y %I:%M %p'), 
             datetime.strptime(targetDate, '%m-%d-%Y %I:%M %p'), 
             remind, datetime.strptime(remindDate, '%m-%d-%Y %I:%M %p'))

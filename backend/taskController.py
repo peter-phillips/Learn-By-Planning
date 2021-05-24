@@ -21,7 +21,7 @@ def taskPost():
         resp.status_code = 401 #Unauthorized
         return resp
     #grabs args from post
-    args = request.get_json()
+    args = request.form
     name = args.get('name')
     desc = args.get('desc')
     clas = args.get('class')
@@ -34,7 +34,7 @@ def taskPost():
     new_id = tasks.find().sort([("taskId", -1)]).limit(1)[0]["taskId"]
     # user = flask_login.current_user
 
-    task = Task(new_id + 1, current_user.uid, name, desc, clas, 
+    task = Task(new_id + 1, 1, name, desc, clas, 
             datetime.strptime(dueDate, '%m-%d-%Y %I:%M %p'), 
             datetime.strptime(targetDate, '%m-%d-%Y %I:%M %p'), 
             remind, datetime.strptime(remindDate, '%m-%d-%Y %I:%M %p'))

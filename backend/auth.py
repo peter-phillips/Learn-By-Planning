@@ -30,7 +30,7 @@ def login_post():
         resp.status_code = 403 #Wrong username/password
         return resp
     # if the above check passes, then we know the user has the right credentials
-    login_user(user)
+    login_user(user, remember=True)
     resp = jsonify(success=True)
     resp.status_code = 202 #accepted http
     return resp

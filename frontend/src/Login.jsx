@@ -1,8 +1,5 @@
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable react/jsx-one-expression-per-line */
-/* eslint-disable no-shadow */
 /* eslint-disable no-unused-vars */
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Link, Switch } from 'react-router-dom';
 import axios from 'axios';
 import Form from './Form';
@@ -10,8 +7,13 @@ import authContext from './authContext';
 import styles from './Login.module.css';
 
 function Login() {
-  const [user, setUser] = useState([]);
   const { setAuth } = useContext(authContext);
+
+  const linkStyle = {
+    color: 'white',
+    textDecoration: 'none',
+    fontSize: 20,
+  };
 
   async function checkLogin() {
     try {
@@ -55,7 +57,7 @@ function Login() {
           <h1 className={styles.name}>Login</h1>
           <Form handleSubmit={authenticateUser} />
           <Switch>
-            <Link to="/CreateNew"> Create New Account</Link>
+            <Link to="/CreateNew" style={linkStyle}> Create New Account</Link>
           </Switch>
         </div>
         <div className={styles.title}>

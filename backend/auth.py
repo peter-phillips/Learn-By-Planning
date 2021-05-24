@@ -63,8 +63,9 @@ def signup_post():
 def refresh():
     old_token = request.get_data()
     new_token = app.guard.refresh_jwt_token(old_token)
-    ret = {'access_token': new_token}
-    return ret, 200
+    ret = jsonify(success=True, access_token=new_token)
+    ret.status_code = 200
+    return ret
 
 # @auth.route('/login', methods=['GET'])
 # def logout():

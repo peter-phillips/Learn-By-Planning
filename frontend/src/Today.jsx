@@ -72,7 +72,6 @@ function Today() {
   async function makePostCall(task) {
     try {
       const response = await axios.post('http://localhost:5000/Today', task);
-      console.log('posting -------');
       if (response.status === 201) {
         return true;
       }
@@ -83,7 +82,6 @@ function Today() {
     }
   }
   function createTask(task) {
-    console.log('kjhdglsafjkol;gsafd');
     makePostCall(task).then((result) => {
       if (result) {
         // Update page with new task

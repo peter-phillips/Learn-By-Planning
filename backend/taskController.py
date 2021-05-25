@@ -1,11 +1,9 @@
 from datetime import datetime, date
 from flask import Blueprint, jsonify, request
-from flask_login import current_user
+from User import User
 from dataBase import DataBase
 from Task import Task
-import flask_praetorian
 import sys
-import app
 
 
 task = Blueprint('task', __name__)
@@ -16,16 +14,15 @@ tasks = db.getTasks()
 @task.route('/Today', methods=['POST'])
 @task.route('/List', methods=['POST'])
 @task.route('/Calendar', methods=['POST'])
-@flask_praetorian.auth_required
 def taskPost():
     # if no one logged in
-    # if not(current_user.is_authenticated):
-    #     resp = jsonify(success=False)
-    #     resp.status_code = 401 #Unauthorized
-    #     return resp
-    args = request.form
-    # user = app.guard.get_user_from_registration_token(args.get('access_token'))
+    user = User.currentUser()
+    if user is None:
+        resp = jsonify(success=False)
+        resp.status_code = 401 #Unauthorized
+        return resp
     #grabs args from post
+    args = request.form
     name = args.get('name')
     desc = args.get('desc')
     clas = args.get('class')
@@ -33,13 +30,12 @@ def taskPost():
     targetDate = args.get('targetDate')
     remind = args.get('remind')
     remindDate = args.get('remindDate')
-    user = app.guard.get_user_from_registration_token(args.get('access_token'))
 
     #finds highest task id
     new_id = tasks.find().sort([("taskId", -1)]).limit(1)[0]["taskId"]
     # user = flask_login.current_user
 
-    task = Task(new_id + 1, user.id, name, desc, clas, 
+    task = Task(new_id + 1, user.uid, name, desc, clas, 
             datetime.strptime(dueDate, '%m-%d-%Y %I:%M %p'), 
             datetime.strptime(targetDate, '%m-%d-%Y %I:%M %p'), 
             remind, datetime.strptime(remindDate, '%m-%d-%Y %I:%M %p'))
@@ -56,7 +52,8 @@ def taskPost():
 @task.route('/Calendar', methods=['DELETE'])
 def taskDelete():
     # if no one logged in
-    if not(current_user.is_authenticated):
+    user = User.currentUser()
+    if user is None:
         resp = jsonify(success=False)
         resp.status_code = 401 #Unauthorized
         return resp
@@ -79,7 +76,8 @@ def taskDelete():
 @task.route('/Calendar', methods=['PUT'])
 def taskPut():
     # if no one logged in
-    if not(current_user.is_authenticated):
+    user = User.currentUser()
+    if user is None:
         resp = jsonify(success=False)
         resp.status_code = 401 #Unauthorized
         return resp
@@ -115,15 +113,16 @@ def taskPut():
 @task.route('/Today', methods=['GET'])
 def todayGet():
     # if no one logged in
-    if not(current_user.is_authenticated):
+    user = User.currentUser()
+    if user is None:
         resp = jsonify(success=False)
         resp.status_code = 401 #Unauthorized
         return resp
     current = datetime.now()
     start = datetime(current.year, current.month, current.day)
     end = datetime(current.year, current.month, current.day, hour=23, minute=59, second=59)
-    today_tasks = tasks.find({"$and": [{"dueDate" : {"$gte" : start , "$lte" : end}}, {"userId" : current_user.uid}]})
-    target_tasks = tasks.find({"$and": [{"targetDate" : {"$gte" : start , "$lte" : end}}, {"userId" : current_user.uid}]})
+    today_tasks = tasks.find({"$and": [{"dueDate" : {"$gte" : start , "$lte" : end}}, {"userId" : user.uid}]})
+    target_tasks = tasks.find({"$and": [{"targetDate" : {"$gte" : start , "$lte" : end}}, {"userId" : user.uid}]})
     ltasks = list(today_tasks)
     ltarget = list(target_tasks)
     tempIds = []
@@ -145,11 +144,12 @@ def todayGet():
 
 @task.route('/List', methods=['GET'])
 def listGet():
-    if not(current_user.is_authenticated):
+    user = User.currentUser()
+    if user is None:
         resp = jsonify(success=False)
         resp.status_code = 401 #Unauthorized
         return resp
-    listTasks = list(tasks.find({"userId" : current_user.uid}))
+    listTasks = list(tasks.find({"userId" : user.uid}))
     for i in listTasks:
         i.pop("_id")
     listTasks.sort(key=lambda x: x.get('dueDate'))

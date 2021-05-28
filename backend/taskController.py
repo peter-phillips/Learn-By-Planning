@@ -3,12 +3,14 @@ from flask import Blueprint, jsonify, request
 from User import User
 from dataBase import DataBase
 from Task import Task
+from classes import Classes
 import sys
 
 
 task = Blueprint('task', __name__)
 db = DataBase()
 tasks = db.getTasks()
+classes = db.getClasses()
 
 #Create a task
 @task.route('/Today', methods=['POST'])
@@ -96,6 +98,7 @@ def taskPut():
     targetDate = datetime.strptime(args.get('targetDate'), '%m-%d-%Y %I:%M %p')
     remind = args.get('remind')
     remindDate = datetime.strptime(args.get('remindDate'), '%m-%d-%Y %I:%M %p')
+    color = args.get('color')
     tasks.update_one({"taskId" : taskId},
                         {"$set": {
                             "name" : name,
@@ -104,7 +107,8 @@ def taskPut():
                             "dueDate" : dueDate,
                             "targetDate" : targetDate,
                             "remind" : remind,
-                            "remindDate" : remindDate
+                            "remindDate" : remindDate,
+                            "color" : color
                         }})
     resp = jsonify(success=True)
     resp.status_code = 200 #OK
@@ -123,8 +127,11 @@ def todayGet():
     end = datetime(current.year, current.month, current.day, hour=23, minute=59, second=59)
     today_tasks = tasks.find({"$and": [{"dueDate" : {"$gte" : start , "$lte" : end}}, {"userId" : user.uid}]})
     target_tasks = tasks.find({"$and": [{"targetDate" : {"$gte" : start , "$lte" : end}}, {"userId" : user.uid}]})
+    user_classes = classes.find({"userId" : user.uid})
     ltasks = list(today_tasks)
     ltarget = list(target_tasks)
+    lclasses = list(user_classes)
+    tempclasses = []
     tempIds = []
     for i in ltasks:
         i.pop("_id")
@@ -137,8 +144,14 @@ def todayGet():
             j["isTarget"] = True
             ltasks.append(j)
     
+    for k in lclasses:
+        k.pop("_id")
+        k.pop("userId")
+        tempclasses.append(k)
+    
+    tempclasses.sort(key=lambda x: x.get("name"))
     ltasks.sort(key=lambda x: x.get('dueDate'))
-    resp = jsonify(success=True, tasks=ltasks)
+    resp = jsonify(success=True, tasks=ltasks, classes=tempclasses)
     resp.status_code = 201
     return resp
 
@@ -150,10 +163,33 @@ def listGet():
         resp.status_code = 401 #Unauthorized
         return resp
     listTasks = list(tasks.find({"userId" : user.uid}))
+    user_classes = list(classes.find({"userId" : user.uid}))
+    tempclasses = []
     for i in listTasks:
         i.pop("_id")
+
+    for k in user_classes:
+        k.pop("_id")
+        k.pop("userId")
+        tempclasses.append(k)
     listTasks.sort(key=lambda x: x.get('dueDate'))
-    resp = jsonify(success=True, tasks=listTasks)
+    resp = jsonify(success=True, tasks=listTasks, classes=tempclasses)
     resp.status_code = 201
     return resp
-    
+
+@task.route('/Class', methods=['POST'])
+def classPost():
+    user = User.currentUser()
+    if user is None:
+        resp = jsonify(success=False)
+        resp.status_code = 401 #Unauthorized
+        return resp
+    args = request.form
+    name = args.get('className')
+    color = args.get('classColor')
+    new_id = classes.find().sort([("classId", -1)]).limit(1)[0]["classId"]
+    curClas= Classes(new_id + 1, user.uid, name, color)
+    classes.insert_one(curClas.toMongo())
+    resp = jsonify(success=True)
+    resp.status_code = 201 #created http code
+    return resp

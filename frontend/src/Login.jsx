@@ -40,9 +40,7 @@ function Login() {
 
   function authenticateUser(user) {
     makePostCall(user).then((result) => {
-      if (result) {
-        setAuth(true);
-      }
+      if (result) setAuth(true);
     });
   }
 

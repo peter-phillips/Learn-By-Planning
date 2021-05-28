@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import React, { useState, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core';
@@ -48,7 +49,8 @@ function List() {
     const cleanObjects = new Map();
     // eslint-disable-next-line no-restricted-syntax
     for (const task of objects) {
-      const tempDay = task.dueDate.split(' ');
+      const stringDate = JSON.stringify(task.dueDate);
+      const tempDay = stringDate.split(' ');
       const date = tempDay[1] + tempDay[2] + tempDay[3];
       if (cleanObjects.has(date)) {
         cleanObjects.get(date).push(task);
@@ -57,6 +59,13 @@ function List() {
       }
     }
     return cleanObjects;
+  }
+
+  function renderTaskHolders() {
+    const comps = [];
+    // eslint-disable-next-line no-unused-vars
+    tasks.forEach((value, key) => comps.push(<TaskHolder Key={key} tasks={value} />));
+    return comps;
   }
 
   useEffect(() => {
@@ -68,7 +77,7 @@ function List() {
   }, []);
   return (
     <Grid container classes={{ container: classes.container }}>
-      {tasks.forEach((value) => <TaskHolder tasks={value} />)}
+      {renderTaskHolders()}
     </Grid>
   );
 }

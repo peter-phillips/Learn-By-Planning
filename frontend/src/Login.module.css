@@ -28,8 +28,12 @@
     margin-left: 10px;
     color:#BD8B13;
 }
-
-body{
+.link{
+    text-decoration: none;
+    color: 'white';
+    font-size: 20px;
+}
+.loginBody{
     background-image: url("./cpuu.jpg");
     background-position: center;
     background-size: cover;

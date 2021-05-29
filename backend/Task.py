@@ -1,7 +1,7 @@
 from flask import jsonify
 class Task():
 
-    def __init__(self, taskId, userId, name, desc, clas, dueDate, targetDate, remind, remindDate=None):
+    def __init__(self, taskId, userId, name, desc, clas, dueDate, targetDate, remind, remindDate):
         self.taskId = taskId
         self.userId = userId
         self.name = name

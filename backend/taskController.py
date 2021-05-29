@@ -22,7 +22,8 @@ def taskPost():
         resp.status_code = 401 #Unauthorized
         return resp
     #grabs args from post
-    args = request.form
+    args = request.get_json()
+    print(args, file=sys.stderr)
     name = args.get('name')
     desc = args.get('desc')
     clas = args.get('class')
@@ -36,9 +37,9 @@ def taskPost():
     # user = flask_login.current_user
 
     task = Task(new_id + 1, user.uid, name, desc, clas, 
-            datetime.strptime(dueDate, '%m-%d-%Y %I:%M %p'), 
-            datetime.strptime(targetDate, '%m-%d-%Y %I:%M %p'), 
-            remind, datetime.strptime(remindDate, '%m-%d-%Y %I:%M %p'))
+            datetime.strptime(dueDate, '%Y-%m-%dT%H:%M:%S.%fZ'), 
+            datetime.strptime(targetDate, '%Y-%m-%dT%H:%M:%S.%fZ'), 
+            remind, datetime.strptime(remindDate, '%Y-%m-%dT%H:%M:%S.%fZ'))
     #inserts new task into mongo
     tasks.insert_one(task.toMongo())
     #sets return

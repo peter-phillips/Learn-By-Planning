@@ -38,9 +38,9 @@ def taskPost():
     # user = flask_login.current_user
 
     task = Task(new_id + 1, user.uid, name, desc, clas, 
-            datetime.strptime(dueDate, '%m-%d-%Y %I:%M %p'), 
-            datetime.strptime(targetDate, '%m-%d-%Y %I:%M %p'), 
-            remind, datetime.strptime(remindDate, '%m-%d-%Y %I:%M %p'))
+            datetime.strptime(dueDate, '%Y-%m-%dT%H:%M:%S.%fZ'), 
+            datetime.strptime(targetDate, '%Y-%m-%dT%H:%M:%S.%fZ'), 
+            remind, datetime.strptime(remindDate, '%Y-%m-%dT%H:%M:%S.%fZ'))
     #inserts new task into mongo
     tasks.insert_one(task.toMongo())
     #sets return
@@ -94,10 +94,10 @@ def taskPut():
     name = args.get('name')
     desc = args.get('desc')
     clas = args.get('class')
-    dueDate = datetime.strptime(args.get('dueDate'), '%m-%d-%Y %I:%M %p')
-    targetDate = datetime.strptime(args.get('targetDate'), '%m-%d-%Y %I:%M %p')
+    dueDate = datetime.strptime(args.get('dueDate'), '%Y-%m-%dT%H:%M:%S.%fZ')
+    targetDate = datetime.strptime(args.get('targetDate'), '%Y-%m-%dT%H:%M:%S.%fZ')
     remind = args.get('remind')
-    remindDate = datetime.strptime(args.get('remindDate'), '%m-%d-%Y %I:%M %p')
+    remindDate = datetime.strptime(args.get('remindDate'), '%Y-%m-%dT%H:%M:%S.%fZ')
     color = args.get('color')
     tasks.update_one({"taskId" : taskId},
                         {"$set": {

@@ -18,3 +18,6 @@ class DataBase:
     
     def getClasses(self):
         return self.db.Classes
+    
+    def getNotifications(self):
+        return self.db.Notifications

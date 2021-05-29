@@ -10,6 +10,11 @@ function CreateFrom(props) {
     },
   );
 
+  const [hidden, toggleHidden] = useState(true);
+  function togglePass() {
+    toggleHidden(!hidden);
+  }
+
   function handleChange(event) {
     const { name, value } = event.target;
     if (name === 'password') setUser({ name: user.name, email: user.email, password: value });
@@ -46,16 +51,17 @@ function CreateFrom(props) {
           placeholder="Enter E-Mail"
         />
       </div>
-      <div>
+      <div className={styles.passWord}>
         <input
-          className={styles.userInput}
-          type="text"
+          className={styles.userPass}
+          type={hidden ? 'password' : 'text'}
           name="password"
           id="password"
           value={user.password}
           onChange={handleChange}
           placeholder="Enter Password"
         />
+        <button className={styles.passButton} type="button" onClick={togglePass}> Show </button>
       </div>
       <div className={styles.button}>
         <input

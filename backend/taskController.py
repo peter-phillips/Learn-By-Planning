@@ -11,6 +11,7 @@ task = Blueprint('task', __name__)
 db = DataBase()
 tasks = db.getTasks()
 classes = db.getClasses()
+notification = db.getNotifications()
 
 #Create a task
 @task.route('/Today', methods=['POST'])
@@ -24,7 +25,7 @@ def taskPost():
         resp.status_code = 401 #Unauthorized
         return resp
     #grabs args from post
-    args = request.form
+    args = request.get_json()
     name = args.get('name')
     desc = args.get('desc')
     clas = args.get('class')
@@ -155,6 +156,32 @@ def todayGet():
     resp.status_code = 201
     return resp
 
+@task.route('/Calendar', methods=['GET'])
+def calendarGet():
+    # if no one logged in
+    user = User.currentUser()
+    if user is None:
+        resp = jsonify(success=False)
+        resp.status_code = 401 #Unauthorized
+        return resp
+    listTasks = list(tasks.find({"userId" : user.uid}))
+    tempclasses = []
+    for i in listTasks:
+        i.pop("_id")
+        i.pop("desc")
+        i.pop("remind")
+        i.pop("remindDate")
+        i.pop("targetDate")
+        i["color"] = classes.find_one({"$and" : [{"userId" : user.uid}, {"className" : i.get("class")}]}).get("classColor")
+        i.pop("taskId")
+        i.pop("userId")
+        tempclasses.append(i)
+
+    listTasks.sort(key=lambda x: x.get('dueDate'))
+    resp = jsonify(success=True, tasks=listTasks)
+    resp.status_code = 201
+    return resp
+
 @task.route('/List', methods=['GET'])
 def listGet():
     user = User.currentUser()
@@ -184,12 +211,47 @@ def classPost():
         resp = jsonify(success=False)
         resp.status_code = 401 #Unauthorized
         return resp
-    args = request.form
+    args = request.get_json()
     name = args.get('className')
     color = args.get('classColor')
     new_id = classes.find().sort([("classId", -1)]).limit(1)[0]["classId"]
     curClas= Classes(new_id + 1, user.uid, name, color)
     classes.insert_one(curClas.toMongo())
     resp = jsonify(success=True)
+    resp.status_code = 201 #created http code
+    return resp
+
+@task.route('/Class', methods=['GET'])
+def getClasses():
+    user = User.currentUser()
+    if user is None:
+        resp = jsonify(success=False)
+        resp.status_code = 401 #Unauthorized
+        return resp
+    user_classes = list(classes.find({"userId" : user.uid}))
+    tempclasses = []
+    for k in user_classes:
+        k.pop("_id")
+        k.pop("userId")
+        tempclasses.append(k)
+    resp = jsonify(success=True, classes=tempclasses)
+    resp.status_code = 201 #created http code
+    return resp
+
+@task.route('/Notification', methods=["GET"])
+def getNotification():
+    user = User.currentUser()
+    if user is None:
+        resp = jsonify(success=False)
+        resp.status_code = 401 #Unauthorized
+        return resp
+    current = datetime.now()
+    notifs = list(notification.find({"$and" : [{"userId" : user.uid}, {"remindDate" : {"$lte" : current}}]}))
+    notifTasks = []
+    for i in notifs:
+        tempT = tasks.find_one({"taskId" : i.get("taskId")})
+        notifTasks.append(tempT.get("name"))
+        notification.delete_one({"taskId" : i.get("taskId")})
+    resp = jsonify(success=True, notification=notifTasks)
     resp.status_code = 201 #created http code
     return resp

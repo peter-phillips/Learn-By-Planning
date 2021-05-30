@@ -1,13 +1,15 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, Switch } from 'react-router-dom';
 import axios from 'axios';
 import Form from './Form';
 import authContext from './authContext';
+import Alerts from './Alerts';
 import styles from './Login.module.css';
 
 function Login() {
   const { setAuth } = useContext(authContext);
+  const [open, setOpen] = useState(false);
 
   const linkStyle = {
     color: 'white',
@@ -28,8 +30,11 @@ function Login() {
   async function makePostCall(user) {
     try {
       const response = await axios.post('http://localhost:5000/login', user);
-      if (response.status === 202) {
+      if (response.status === 202 || response.status === 304) {
         return true;
+      }
+      if (response.status === 403) {
+        return false;
       }
       return false;
     } catch (error) {
@@ -42,6 +47,8 @@ function Login() {
     makePostCall(user).then((result) => {
       if (result) {
         setAuth(true);
+      } else {
+        setOpen(true);
       }
     });
   }
@@ -55,6 +62,7 @@ function Login() {
       <div className={styles.overlay}>
         <div className={styles.content}>
           <h1 className={styles.name}>Login</h1>
+          <Alerts open={open} setOpen={setOpen} message="Invalid username or passowrd" />
           <Form handleSubmit={authenticateUser} />
           <Switch>
             <Link to="/CreateNew" style={linkStyle}> Create New Account</Link>

@@ -8,6 +8,10 @@ function Form(props) {
       password: '',
     },
   );
+  const [hidden, toggleHidden] = useState(true);
+  function togglePass() {
+    toggleHidden(!hidden);
+  }
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -42,10 +46,10 @@ function Form(props) {
           onKeyDown={handleKeyDown}
         />
       </div>
-      <div>
+      <div className={styles.passWord}>
         <input
-          className={styles.userInput}
-          type="text"
+          className={styles.userPass}
+          type={hidden ? 'password' : 'text'}
           name="password"
           id="password"
           value={user.password}
@@ -53,6 +57,7 @@ function Form(props) {
           placeholder="Enter Password"
           onKeyDown={handleKeyDown}
         />
+        <button className={styles.passButton} type="button" onClick={togglePass}> Show </button>
       </div>
     </form>
   );

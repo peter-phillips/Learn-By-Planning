@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
+import axios from 'axios';
 import Taskform from './TaskForm';
 import ClassForm from './ClassForm';
 import styles from './Today.module.css';
@@ -11,6 +12,19 @@ function Today() {
 
   const [classOpen, setclassOpen] = useState(false);
   const handleClassOpen = () => { setclassOpen(!classOpen); };
+
+  const [userClasses, setClasses] = useState([]);
+
+  async function fetchAllClasses() {
+    try {
+      const response = await axios.get('http://localhost:5000/Class');
+      console.log(response.data.classes);
+      return response.data.classes;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 
   const useStyles = makeStyles({
     task: {
@@ -40,6 +54,15 @@ function Today() {
     },
   });
 
+  useEffect(() => {
+    fetchAllClasses().then((result) => {
+      if (result) {
+        setClasses(result);
+        console.log(userClasses);
+      }
+    });
+  }, []);
+
   const classes = useStyles();
   return (
     <body className={styles.todayBody}>
@@ -47,7 +70,7 @@ function Today() {
         <Button className={classes.task} onClick={handleTaskOpen}>
           +
         </Button>
-        <Taskform open={taskOpen} handleClickOpen={handleTaskOpen} />
+        <Taskform userClasses={userClasses} open={taskOpen} handleClickOpen={handleTaskOpen} />
         <Button className={classes.class} onClick={handleClassOpen}>
           Add A Class
         </Button>

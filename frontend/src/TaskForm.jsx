@@ -1,3 +1,5 @@
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable max-len */
 import React, { useState } from 'react';
 import axios from 'axios';
 import Button from '@material-ui/core/Button';
@@ -16,10 +18,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import DateFnsUtils from '@date-io/date-fns';
 
 function TaskForm(props) {
-  const { open, handleClickOpen } = props;
+  const { open, handleClickOpen, userClasses } = props;
   const [task, setTask] = useState({
     name: '',
     desc: '',
+    class: 'Choose Class',
     dueDate: null,
     targetDate: null,
     remindDate: null,
@@ -27,22 +30,42 @@ function TaskForm(props) {
   const [dueDate, setDueDate] = useState(null);
   const [targetDate, setTargetDate] = useState(null);
   const [remindDate, setRemindDate] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   function handleChange(event) {
     const { name, value } = event.target;
     setTask({ ...task, [name]: value });
   }
+
   const handleDueDateChange = (date) => {
     setDueDate(date);
     setTask({ ...task, dueDate: date });
   };
+
   const handleTargetDateChange = (date) => {
     setTargetDate(date); setTask({ ...task, targetDate: date });
   };
+
   const handleRemindDateChange = (date) => {
     setRemindDate(date); setTask({ ...task, remindDate: date });
   };
-  // const handleNameChange = (newname) => { setTask({ name: newname.target.value }); };
-  //  const handleDescChange = (newdesc) => { setTask({ desc: newdesc.target.value }); };
+
+  function resetDates() {
+    setTargetDate(null);
+    setDueDate(null);
+    setRemindDate(null);
+  }
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleMenuClick = (event, value) => {
+    setTask({ ...task, class: value });
+    handleClose();
+  };
 
   const useStyles = makeStyles({
     root: {
@@ -101,22 +124,21 @@ function TaskForm(props) {
   }
 
   function createTask() {
-    console.log(task);
     makePostCall(task).then((result) => {
       if (result) {
-        // something later
+        setTask({
+          name: '',
+          desc: '',
+          class: 'Choose Class',
+          dueDate: null,
+          targetDate: null,
+          remindDate: null,
+        });
+        resetDates();
+        handleClickOpen();
       }
     });
   }
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const classes = useStyles();
   return (
@@ -127,7 +149,7 @@ function TaskForm(props) {
           <text className={classes.task}> TASK</text>
         </DialogTitle>
         <DialogContent>
-          <form className={classes.dates} id="task-form" onSubmit={createTask}>
+          <div className={classes.dates}>
             <TextField
               autoFocus
               margin="dense"
@@ -140,7 +162,6 @@ function TaskForm(props) {
             />
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <DateTimePicker
-                autoOK
                 name="dueDate"
                 label="Choose Due Date"
                 format="MM-dd-yyyy hh:mm aa"
@@ -148,7 +169,6 @@ function TaskForm(props) {
                 onChange={handleDueDateChange}
               />
               <DateTimePicker
-                autoOK
                 name="targetDate"
                 label="Choose Target Date"
                 format="MM-dd-yyyy hh:mm aa"
@@ -156,7 +176,6 @@ function TaskForm(props) {
                 onChange={handleTargetDateChange}
               />
               <DateTimePicker
-                autoOK
                 name="remindDate"
                 label="Choose Remind Date"
                 format="MM-dd-yyyy hh:mm aa"
@@ -165,7 +184,7 @@ function TaskForm(props) {
               />
             </MuiPickersUtilsProvider>
             <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-              Choose Classs
+              {task.class}
             </Button>
             <Menu
               id="simple-menu"
@@ -174,9 +193,16 @@ function TaskForm(props) {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>CPE-316</MenuItem>
-              <MenuItem onClick={handleClose}>STAT-350</MenuItem>
-              <MenuItem onClick={handleClose}>CPE-307</MenuItem>
+              {userClasses.map((value, index) => (
+                <MenuItem
+                  key={index}
+                  name="class"
+                  value={task.class}
+                  onClick={(event) => handleMenuClick(event, value.className)}
+                >
+                  {value.className}
+                </MenuItem>
+              ))}
             </Menu>
             <TextField
               autoFocus
@@ -188,13 +214,13 @@ function TaskForm(props) {
               fullWidth
               onChange={handleChange}
             />
-          </form>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClickOpen} className={classes.otherButtons}>
             Cancel
           </Button>
-          <Button className={classes.otherButtons} form="task-form" type="submit">
+          <Button className={classes.otherButtons} onClick={createTask} type="button">
             Create New Task
           </Button>
         </DialogActions>

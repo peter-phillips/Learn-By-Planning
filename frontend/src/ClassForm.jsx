@@ -12,6 +12,7 @@ import { CirclePicker } from 'react-color';
 
 function ClassForm(props) {
   const { open, handleClickOpen } = props;
+  const [cc, updatecc] = useState(null);
   const [newClass, setnewClass] = useState({
     className: '',
     classColor: '',
@@ -21,6 +22,9 @@ function ClassForm(props) {
     const { name, value } = event.target;
     setnewClass({ ...newClass, [name]: value });
   }
+  const handleColorChange = (color) => {
+    updatecc(color); setnewClass({ ...newClass, classColor: color });
+  };
 
   const useStyles = makeStyles({
     root: {
@@ -110,8 +114,9 @@ function ClassForm(props) {
               name="classColor"
               type="color"
               id="classColor"
+              value={cc}
               label="Enter Class Color"
-              onChange={handleChange}
+              onChange={handleColorChange}
             />
           </form>
         </DialogContent>

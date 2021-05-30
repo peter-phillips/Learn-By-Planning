@@ -25,7 +25,6 @@ def taskPost():
         return resp
     #grabs args from post
     args = request.get_json()
-    print(args, file=sys.stderr)
     name = args.get('name')
     desc = args.get('desc')
     clas = args.get('class')
@@ -44,6 +43,7 @@ def taskPost():
             remind, datetime.strptime(remindDate, '%Y-%m-%dT%H:%M:%S.%fZ'))
     #inserts new task into mongo
     tasks.insert_one(task.toMongo())
+    print(args, file=sys.stderr)
     #sets return
     resp = jsonify(success=True)
     resp.status_code = 201 #created http code
@@ -178,6 +178,23 @@ def listGet():
     resp.status_code = 201
     return resp
 
+@task.route('/Class', methods=['GET'])
+def getClasses():
+    user = User.currentUser()
+    if user is None:
+        resp = jsonify(success=False)
+        resp.status_code = 401 #Unauthorized
+        return resp
+    user_classes = list(classes.find({"userId" : user.uid}))
+    tempclasses = []
+    for k in user_classes:
+        k.pop("_id")
+        k.pop("userId")
+        tempclasses.append(k)
+    resp = jsonify(success=True, classes=tempclasses)
+    resp.status_code = 201 #created http code
+    return resp
+
 @task.route('/Class', methods=['POST'])
 def classPost():
     user = User.currentUser()
@@ -185,7 +202,7 @@ def classPost():
         resp = jsonify(success=False)
         resp.status_code = 401 #Unauthorized
         return resp
-    args = request.form
+    args = request.get_json()
     name = args.get('className')
     color = args.get('classColor')
     new_id = classes.find().sort([("classId", -1)]).limit(1)[0]["classId"]

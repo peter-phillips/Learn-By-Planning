@@ -253,5 +253,5 @@ def getNotification():
         notifTasks.append(tempT.get("name"))
         notification.delete_one({"taskId" : i.get("taskId")})
     resp = jsonify(success=True, notification=notifTasks)
-    resp.status_code = 201 #created http code
+    resp.status_code = 200 #OK
     return resp

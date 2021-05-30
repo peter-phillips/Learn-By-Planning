@@ -44,6 +44,7 @@ def taskPost():
             remind, datetime.strptime(remindDate, '%Y-%m-%dT%H:%M:%S.%fZ'))
     #inserts new task into mongo
     tasks.insert_one(task.toMongo())
+    print(args, file=sys.stderr)
     #sets return
     resp = jsonify(success=True)
     resp.status_code = 201 #created http code
@@ -202,6 +203,23 @@ def listGet():
     listTasks.sort(key=lambda x: x.get('dueDate'))
     resp = jsonify(success=True, tasks=listTasks, classes=tempclasses)
     resp.status_code = 201
+    return resp
+
+@task.route('/Class', methods=['GET'])
+def getClasses():
+    user = User.currentUser()
+    if user is None:
+        resp = jsonify(success=False)
+        resp.status_code = 401 #Unauthorized
+        return resp
+    user_classes = list(classes.find({"userId" : user.uid}))
+    tempclasses = []
+    for k in user_classes:
+        k.pop("_id")
+        k.pop("userId")
+        tempclasses.append(k)
+    resp = jsonify(success=True, classes=tempclasses)
+    resp.status_code = 201 #created http code
     return resp
 
 @task.route('/Class', methods=['POST'])

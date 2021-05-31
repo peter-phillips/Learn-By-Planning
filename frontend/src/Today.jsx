@@ -6,13 +6,10 @@ import Taskform from './TaskForm';
 import ClassForm from './ClassForm';
 import styles from './Today.module.css';
 import useDidMountEffect from './useDidMountEffect';
-import Notification from './Notification'
+import Notification from './Notification';
 
 function Today() {
-  const [open, setOpen] = useState(false);
   const [notiftimer, settimer] = useState(false);
-  const handleClickOpen = () => { setOpen(true); };
-  const handleClose = () => { setOpen(false); };
   const [taskOpen, settaskOpen] = useState(false);
   const handleTaskOpen = () => { settaskOpen(!taskOpen); };
 
@@ -20,6 +17,8 @@ function Today() {
   const handleClassOpen = () => { setclassOpen(!classOpen); };
 
   const [userClasses, setClasses] = useState([]);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notification, setNotification] = useState([]);
 
   async function fetchAllClasses() {
     try {
@@ -67,14 +66,34 @@ function Today() {
         console.log(userClasses);
       }
     });
+  }, []);
+
+  async function fetchNotifs() {
+    try {
+      console.log('fetch');
+      const response = await axios.get('http://localhost:5000/Notification');
+      console.log(response.data.notification);
+      return response;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   }
   useDidMountEffect(() => {
+    console.log('mount called');
     // Updates group data every 10 minutes
     const timer = setTimeout(() => {
-      const response = await axios.get('http://localhost:5000/Notification');
-      if (response.status === 200){
-        response.data.notification.map(() =>)
-      }
+      console.log('timer');
+      fetchNotifs().then((result) => {
+        if (result.status === 200) {
+          console.log('200-recieved');
+          setNotification(result.data.notification);
+          setNotifOpen(true);
+        } else if (result.status === 204) {
+          console.log('204-recieved');
+          setNotification([]);
+        }
+      });
       settimer(!notiftimer);
     }, 60000);
     return () => {
@@ -90,6 +109,11 @@ function Today() {
   return (
     <body className={styles.todayBody}>
       <div>
+        <Notification
+          notifMessages={notification}
+          notifSetOpen={setNotifOpen}
+          notifOpen={notifOpen}
+        />
         <Button className={classes.task} onClick={handleTaskOpen}>
           +
         </Button>

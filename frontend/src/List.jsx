@@ -81,3 +81,5 @@ function List() {
     </Grid>
   );
 }
+
+export default List;

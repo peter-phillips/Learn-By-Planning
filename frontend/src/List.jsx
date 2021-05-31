@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable react/no-array-index-key */
 import React, { useState, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
@@ -45,6 +46,44 @@ function List() {
     }
   }
 
+  async function makeDeleteCall(id) {
+    try {
+      const response = await axios.delete('http://localhost:5000/List', { data: { taskId: id } });
+      if (response.status === 200) {
+        return response;
+      }
+      return false;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+
+  function removeTask(taskId) {
+    const updatedTaskList = new Map();
+    tasks.forEach((value, date) => {
+      for (const task of value) {
+        if (task.taskId !== taskId) {
+          if (updatedTaskList.has(date)) {
+            updatedTaskList.get(date).push(task);
+          } else {
+            updatedTaskList.set(date, [task]);
+          }
+        }
+      }
+    });
+    console.log(updatedTaskList);
+    setTasks(updatedTaskList);
+  }
+
+  const deleteTask = (deletedTaskId) => {
+    makeDeleteCall(deletedTaskId).then((result) => {
+      if (result) {
+        removeTask(deletedTaskId);
+      }
+    });
+  };
+
   function cleanList(objects) {
     const cleanObjects = new Map();
     // eslint-disable-next-line no-restricted-syntax
@@ -64,7 +103,11 @@ function List() {
   function renderTaskHolders() {
     const comps = [];
     // eslint-disable-next-line no-unused-vars
-    tasks.forEach((value, key) => comps.push(<TaskHolder Key={key} tasks={value} />));
+    tasks.forEach((value, key) => comps.push(<TaskHolder
+      Key={key}
+      tasks={value}
+      deleteTask={deleteTask}
+    />));
     return comps;
   }
 
@@ -75,6 +118,7 @@ function List() {
       }
     });
   }, []);
+
   return (
     <Grid container classes={{ container: classes.container }}>
       {renderTaskHolders()}

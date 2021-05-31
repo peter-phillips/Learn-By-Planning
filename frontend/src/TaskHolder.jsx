@@ -4,7 +4,7 @@ import Card from '@material-ui/core/Card';
 import IndividualTask from './IndividualTask';
 
 function TaskHolder(props) {
-  const { tasks } = props;
+  const { Key, tasks, deleteTask } = props;
 
   const toLocalDate = (unformatedDate) => {
     // eslint-disable-next-line radix
@@ -53,7 +53,13 @@ function TaskHolder(props) {
       >
         {toLocalDate(tasks[0].dueDate)}
       </Card>
-      {tasks.map((task) => <IndividualTask task={task} />)}
+      {tasks.map((task) => (
+        <IndividualTask
+          Key={Key}
+          task={task}
+          deleteTask={deleteTask}
+        />
+      ))}
     </Grid>
   );
 }

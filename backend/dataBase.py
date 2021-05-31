@@ -15,3 +15,6 @@ class DataBase:
     
     def getTasks(self):
         return self.db.Tasks
+    
+    def getClasses(self):
+        return self.db.Classes

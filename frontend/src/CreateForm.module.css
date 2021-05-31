@@ -13,7 +13,47 @@
     outline: none;
 }
 
+.userPass{
+    display: flex;
+    width: 400px;
+    height: 69px;
+    padding-right: 59px;
+    background-color:#E4E1D1;
+    border-radius: 65px;
+    border: none;
+    color:black;
+    font-size: 22px;
+    text-indent:20px;
+    outline: none;
+}
+
+.passWord{
+    display: flex;
+    flex-direction: row;
+}
+.passButton{
+    display: flex;
+    outline: none;
+    margin-left: -55px;
+    margin-top: 1px;
+    width: 55px;
+    height: 69px;
+    background-color:#E4E1D1;
+    color: black;
+    border:none;
+    border-bottom-right-radius: 65px;
+    border-top-right-radius: 65px ;
+    text-align: center;
+    align-items: center;
+}
+
 .userInput::placeholder{
+    color:black;
+    font-size: 22px;
+    text-indent:20px;
+}
+
+.userPass::placeholder{
     color:black;
     font-size: 22px;
     text-indent:20px;

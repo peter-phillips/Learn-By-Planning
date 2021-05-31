@@ -13,11 +13,14 @@
     outline: none;
 }
 
+
 .userInput::placeholder{
     color:black;
     font-size: 22px;
     text-indent:20px;
 }
+
+
 
 .button{
     display: flex;

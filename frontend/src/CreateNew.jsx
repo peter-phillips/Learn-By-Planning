@@ -4,10 +4,12 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import CreateForm from './CreateForm';
+import Alerts from './Alerts';
 import styles from './Login.module.css';
 
 function CreateNew() {
   const [user, setUser] = useState([]);
+  const [open, setOpen] = useState(false);
   const history = useHistory();
 
   // eslint-disable-next-line no-shadow
@@ -16,6 +18,9 @@ function CreateNew() {
       const response = await axios.post('http://localhost:5000/signup', user);
       if (response.status === 201) {
         return true;
+      }
+      if (response.status === 409) {
+        return false;
       }
       return false;
     } catch (error) {
@@ -29,6 +34,8 @@ function CreateNew() {
     makePostCall(user).then((result) => {
       if (result) {
         history.push('/');
+      } else {
+        setOpen(true);
       }
     });
   }
@@ -38,6 +45,7 @@ function CreateNew() {
       <div className={styles.overlay}>
         <div className={styles.content}>
           <h1 className={styles.name}>New Account</h1>
+          <Alerts open={open} setOpen={setOpen} message="E-Mail already in use" />
           <CreateForm handleSubmit={createUser} />
         </div>
         <div className={styles.title}>

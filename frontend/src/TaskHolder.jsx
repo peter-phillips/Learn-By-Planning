@@ -44,11 +44,11 @@ function TaskHolder(props) {
       container
       direction="column"
       style={{
-        minHeight: 325, backgroundColor: 'black', display: 'flex', alignItems: 'center', marginBottom: 10,
+        minHeight: 325, backgroundColor: '#FBF8EC', display: 'flex', alignItems: 'center', marginBottom: 10,
       }}
     >
       <Card style={{
-        minHeight: 50, display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 5, marginTop: 10, width: '99%',
+        minHeight: 50, backgroundColor: '#154734', color: 'white', fontSize: 28, display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 5, marginTop: 10, width: '99%',
       }}
       >
         {toLocalDate(tasks[0].dueDate)}

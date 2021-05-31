@@ -3,12 +3,14 @@ from flask import Blueprint, jsonify, request
 from User import User
 from dataBase import DataBase
 from Task import Task
+from classes import Classes
 import sys
 
 
 task = Blueprint('task', __name__)
 db = DataBase()
 tasks = db.getTasks()
+classes = db.getClasses()
 
 #Create a task
 @task.route('/Today', methods=['POST'])
@@ -22,7 +24,7 @@ def taskPost():
         resp.status_code = 401 #Unauthorized
         return resp
     #grabs args from post
-    args = request.form
+    args = request.get_json()
     name = args.get('name')
     desc = args.get('desc')
     clas = args.get('class')
@@ -36,11 +38,12 @@ def taskPost():
     # user = flask_login.current_user
 
     task = Task(new_id + 1, user.uid, name, desc, clas, 
-            datetime.strptime(dueDate, '%m-%d-%Y %I:%M %p'), 
-            datetime.strptime(targetDate, '%m-%d-%Y %I:%M %p'), 
-            remind, datetime.strptime(remindDate, '%m-%d-%Y %I:%M %p'))
+            datetime.strptime(dueDate, '%Y-%m-%dT%H:%M:%S.%fZ'), 
+            datetime.strptime(targetDate, '%Y-%m-%dT%H:%M:%S.%fZ'), 
+            remind, datetime.strptime(remindDate, '%Y-%m-%dT%H:%M:%S.%fZ'))
     #inserts new task into mongo
     tasks.insert_one(task.toMongo())
+    print(args, file=sys.stderr)
     #sets return
     resp = jsonify(success=True)
     resp.status_code = 201 #created http code
@@ -92,10 +95,11 @@ def taskPut():
     name = args.get('name')
     desc = args.get('desc')
     clas = args.get('class')
-    dueDate = datetime.strptime(args.get('dueDate'), '%m-%d-%Y %I:%M %p')
-    targetDate = datetime.strptime(args.get('targetDate'), '%m-%d-%Y %I:%M %p')
+    dueDate = datetime.strptime(args.get('dueDate'), '%Y-%m-%dT%H:%M:%S.%fZ')
+    targetDate = datetime.strptime(args.get('targetDate'), '%Y-%m-%dT%H:%M:%S.%fZ')
     remind = args.get('remind')
-    remindDate = datetime.strptime(args.get('remindDate'), '%m-%d-%Y %I:%M %p')
+    remindDate = datetime.strptime(args.get('remindDate'), '%Y-%m-%dT%H:%M:%S.%fZ')
+    color = args.get('color')
     tasks.update_one({"taskId" : taskId},
                         {"$set": {
                             "name" : name,
@@ -104,7 +108,8 @@ def taskPut():
                             "dueDate" : dueDate,
                             "targetDate" : targetDate,
                             "remind" : remind,
-                            "remindDate" : remindDate
+                            "remindDate" : remindDate,
+                            "color" : color
                         }})
     resp = jsonify(success=True)
     resp.status_code = 200 #OK
@@ -123,8 +128,11 @@ def todayGet():
     end = datetime(current.year, current.month, current.day, hour=23, minute=59, second=59)
     today_tasks = tasks.find({"$and": [{"dueDate" : {"$gte" : start , "$lte" : end}}, {"userId" : user.uid}]})
     target_tasks = tasks.find({"$and": [{"targetDate" : {"$gte" : start , "$lte" : end}}, {"userId" : user.uid}]})
+    user_classes = classes.find({"userId" : user.uid})
     ltasks = list(today_tasks)
     ltarget = list(target_tasks)
+    lclasses = list(user_classes)
+    tempclasses = []
     tempIds = []
     for i in ltasks:
         i.pop("_id")
@@ -137,8 +145,14 @@ def todayGet():
             j["isTarget"] = True
             ltasks.append(j)
     
+    for k in lclasses:
+        k.pop("_id")
+        k.pop("userId")
+        tempclasses.append(k)
+    
+    tempclasses.sort(key=lambda x: x.get("name"))
     ltasks.sort(key=lambda x: x.get('dueDate'))
-    resp = jsonify(success=True, tasks=ltasks)
+    resp = jsonify(success=True, tasks=ltasks, classes=tempclasses)
     resp.status_code = 201
     return resp
 
@@ -150,10 +164,50 @@ def listGet():
         resp.status_code = 401 #Unauthorized
         return resp
     listTasks = list(tasks.find({"userId" : user.uid}))
+    user_classes = list(classes.find({"userId" : user.uid}))
+    tempclasses = []
     for i in listTasks:
         i.pop("_id")
+
+    for k in user_classes:
+        k.pop("_id")
+        k.pop("userId")
+        tempclasses.append(k)
     listTasks.sort(key=lambda x: x.get('dueDate'))
-    resp = jsonify(success=True, tasks=listTasks)
+    resp = jsonify(success=True, tasks=listTasks, classes=tempclasses)
     resp.status_code = 201
     return resp
-    
+
+@task.route('/Class', methods=['GET'])
+def getClasses():
+    user = User.currentUser()
+    if user is None:
+        resp = jsonify(success=False)
+        resp.status_code = 401 #Unauthorized
+        return resp
+    user_classes = list(classes.find({"userId" : user.uid}))
+    tempclasses = []
+    for k in user_classes:
+        k.pop("_id")
+        k.pop("userId")
+        tempclasses.append(k)
+    resp = jsonify(success=True, classes=tempclasses)
+    resp.status_code = 201 #created http code
+    return resp
+
+@task.route('/Class', methods=['POST'])
+def classPost():
+    user = User.currentUser()
+    if user is None:
+        resp = jsonify(success=False)
+        resp.status_code = 401 #Unauthorized
+        return resp
+    args = request.get_json()
+    name = args.get('className')
+    color = args.get('classColor')
+    new_id = classes.find().sort([("classId", -1)]).limit(1)[0]["classId"]
+    curClas= Classes(new_id + 1, user.uid, name, color)
+    classes.insert_one(curClas.toMongo())
+    resp = jsonify(success=True)
+    resp.status_code = 201 #created http code
+    return resp

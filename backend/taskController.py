@@ -138,12 +138,14 @@ def todayGet():
     for i in ltasks:
         i.pop("_id")
         i["isTarget"] = False
+        i["color"] = classes.find_one({"$and" : [{"userId" : user.uid}, {"className" : i.get("class")}]}).get("classColor")
         tempIds.append(i.get("taskId"))
     
     for j in ltarget:
         if j.get("taskId") not in tempIds:
             j.pop("_id")
             j["isTarget"] = True
+            j["color"] = classes.find_one({"$and" : [{"userId" : user.uid}, {"className" : i.get("class")}]}).get("classColor")
             ltasks.append(j)
     
     for k in lclasses:
@@ -151,7 +153,7 @@ def todayGet():
         k.pop("userId")
         tempclasses.append(k)
     
-    tempclasses.sort(key=lambda x: x.get("name"))
+    tempclasses.sort(key=lambda x: x.get("className"))
     ltasks.sort(key=lambda x: x.get('dueDate'))
     resp = jsonify(success=True, tasks=ltasks, classes=tempclasses)
     resp.status_code = 201
@@ -195,6 +197,7 @@ def listGet():
     tempclasses = []
     for i in listTasks:
         i.pop("_id")
+        i["color"] = classes.find_one({"$and" : [{"userId" : user.uid}, {"className" : i.get("class")}]}).get("classColor")
 
     for k in user_classes:
         k.pop("_id")
@@ -239,23 +242,6 @@ def classPost():
     resp.status_code = 201 #created http code
     return resp
 
-@task.route('/Class', methods=['GET'])
-def getClasses():
-    user = User.currentUser()
-    if user is None:
-        resp = jsonify(success=False)
-        resp.status_code = 401 #Unauthorized
-        return resp
-    user_classes = list(classes.find({"userId" : user.uid}))
-    tempclasses = []
-    for k in user_classes:
-        k.pop("_id")
-        k.pop("userId")
-        tempclasses.append(k)
-    resp = jsonify(success=True, classes=tempclasses)
-    resp.status_code = 201 #created http code
-    return resp
-
 @task.route('/Notification', methods=["GET"])
 def getNotification():
     user = User.currentUser()
@@ -265,6 +251,11 @@ def getNotification():
         return resp
     current = datetime.now()
     notifs = list(notification.find({"$and" : [{"userId" : user.uid}, {"remindDate" : {"$lte" : current}}]}))
+    print(notifs, file=sys.stderr)
+    if len(notifs) == 0:
+        resp = jsonify(success=True)
+        resp.status_code = 204
+        return resp
     notifTasks = []
     for i in notifs:
         tempT = tasks.find_one({"taskId" : i.get("taskId")})

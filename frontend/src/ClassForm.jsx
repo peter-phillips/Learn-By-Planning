@@ -11,7 +11,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { CirclePicker } from 'react-color';
 
 function ClassForm(props) {
-  const { open, handleClickOpen } = props;
+  const {
+    open, handleClickOpen, userClasses, setClasses,
+  } = props;
   const [cc, updatecc] = useState(null);
   const [newClass, setnewClass] = useState({
     className: '',
@@ -73,7 +75,7 @@ function ClassForm(props) {
     try {
       const response = await axios.post('http://localhost:5000/Class', theclass);
       if (response.status === 201) {
-        return true;
+        return response.data.clas;
       }
       return false;
     } catch (error) {
@@ -85,7 +87,12 @@ function ClassForm(props) {
   function createClass() {
     makePostCall(newClass).then((result) => {
       if (result) {
-        // Update page with new task
+        setnewClass({
+          className: '',
+          classColor: '',
+        });
+        handleClickOpen();
+        setClasses([...userClasses, result]);
       }
     });
   }
@@ -99,7 +106,7 @@ function ClassForm(props) {
           <text className={classes.task}> CLASS</text>
         </DialogTitle>
         <DialogContent>
-          <form className={classes.dates} id="task-form" onSubmit={createClass}>
+          <div>
             <TextField
               autoFocus
               margin="dense"
@@ -118,13 +125,13 @@ function ClassForm(props) {
               label="Enter Class Color"
               onChange={handleColorChange}
             />
-          </form>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClickOpen} className={classes.otherButtons}>
             Cancel
           </Button>
-          <Button onClick={createClass} className={classes.otherButtons} form="task-form" type="submit">
+          <Button onClick={createClass} className={classes.otherButtons} type="button">
             Create New Class
           </Button>
         </DialogActions>

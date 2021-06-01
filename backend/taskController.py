@@ -17,6 +17,7 @@ classes = db.getClasses()
 @task.route('/List', methods=['POST'])
 @task.route('/Calendar', methods=['POST'])
 def taskPost():
+    """creates a new task in the database"""
     # if no one logged in
     user = User.currentUser()
     if user is None:
@@ -37,17 +38,22 @@ def taskPost():
     new_id = tasks.find().sort([("taskId", -1)]).limit(1)[0]["taskId"]
     # user = flask_login.current_user
 
-    task = Task(new_id + 1, user.uid, name, desc, clas, 
-            datetime.strptime(dueDate, '%Y-%m-%dT%H:%M:%S.%fZ'), 
-            datetime.strptime(targetDate, '%Y-%m-%dT%H:%M:%S.%fZ'), 
+    task = Task(new_id + 1, user.uid, name, desc, clas,
+            datetime.strptime(dueDate, '%Y-%m-%dT%H:%M:%S.%fZ'),
+            datetime.strptime(targetDate, '%Y-%m-%dT%H:%M:%S.%fZ'),
             remind, datetime.strptime(remindDate, '%Y-%m-%dT%H:%M:%S.%fZ'))
     #inserts new task into mongo
     tasks.insert_one(task.toMongo())
     print(args, file=sys.stderr)
+    res_task = task.toMongo()
+    res_task["color"] = classes.find_one({"$and" :
+                                            [{"userId" : user.uid}, 
+                                            {"className" : res_task.get("class")}]}).get("classColor")
     #sets return
-    resp = jsonify(success=True)
+    resp = jsonify(success=True, task=res_task)
     resp.status_code = 201 #created http code
     return resp
+
 
 # Delete a task
 @task.route('/Today', methods=['DELETE'])
@@ -144,7 +150,7 @@ def todayGet():
         if j.get("taskId") not in tempIds:
             j.pop("_id")
             j["isTarget"] = True
-            j["color"] = classes.find_one({"$and" : [{"userId" : user.uid}, {"className" : i.get("class")}]}).get("classColor")
+            j["color"] = classes.find_one({"$and" : [{"userId" : user.uid}, {"className" : j.get("class")}]}).get("classColor")
             ltasks.append(j)
 
     for k in lclasses:
@@ -200,17 +206,23 @@ def getClasses():
 
 @task.route('/Class', methods=['POST'])
 def classPost():
+    """Creates a new class in the database"""
     user = User.currentUser()
     if user is None:
         resp = jsonify(success=False)
         resp.status_code = 401 #Unauthorized
         return resp
     args = request.get_json()
+    print(args, file=sys.stderr)
     name = args.get('className')
     color = args.get('classColor')
     new_id = classes.find().sort([("classId", -1)]).limit(1)[0]["classId"]
     curClas= Classes(new_id + 1, user.uid, name, color)
     classes.insert_one(curClas.toMongo())
-    resp = jsonify(success=True)
+    res_class = classes.find_one({"$and" :
+                                        [{"userId" : user.uid},
+                                        {"className" : name}]})
+    res_class.pop("_id")
+    resp = jsonify(success=True, clas=res_class)
     resp.status_code = 201 #created http code
     return resp

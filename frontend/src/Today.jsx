@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
+// import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import Taskform from './TaskForm';
 import ClassForm from './ClassForm';
-import TaskHolder from './TaskHolder';
+// import TaskHolder from './TaskHolder';
+import TaskTable from './TaskTable';
 import styles from './Today.module.css';
 
 function Today() {
@@ -46,37 +47,26 @@ function Today() {
     return cleanObjects;
   }
 
-  function renderTaskHolders() {
-    const comps = [];
-    // eslint-disable-next-line no-unused-vars
-    tasks.forEach((value, key) => comps.push(<TaskHolder Key={key} tasks={value} />));
-    return comps;
-  }
-
   const useStyles = makeStyles({
     task: {
       fontSize: 60,
       color: 'white',
-      backgroundColor: '#BD8B13',
+      backgroundColor: '#ffbb17',
       height: 70,
       width: 70,
       borderRadius: '50%',
-      opacity: 0.6,
       '&:hover': {
         backgroundColor: '#BD8B13',
-        opacity: 1,
       },
     },
     class: {
       fontSize: 12,
       color: 'white',
-      backgroundColor: '#BD8B13',
+      backgroundColor: '#ffbb17',
       height: 70,
       width: 100,
-      opacity: 0.6,
       '&:hover': {
         backgroundColor: '#BD8B13',
-        opacity: 1,
       },
       root: {
         display: 'flex',
@@ -116,16 +106,22 @@ function Today() {
   return (
     <body className={styles.todayBody}>
       <div>
-        <Grid container classes={{ container: classes.container }}>
-          {renderTaskHolders()}
-        </Grid>
-        <Button className={classes.task} onClick={handleTaskOpen}>
-          +
-        </Button>
-        <Taskform userClasses={userClasses} open={taskOpen} handleClickOpen={handleTaskOpen} />
-        <Button className={classes.class} onClick={handleClassOpen}>
-          Add A Class
-        </Button>
+        <TaskTable tasks={tasks} />
+        <div className={styles.buttons}>
+          <Button className={classes.task} onClick={handleTaskOpen}>
+            +
+          </Button>
+          <Button className={classes.class} onClick={handleClassOpen}>
+            Add A Class
+          </Button>
+        </div>
+        <Taskform
+          userClasses={userClasses}
+          open={taskOpen}
+          handleClickOpen={handleTaskOpen}
+          tasks={tasks}
+          setTasks={setTasks}
+        />
         <ClassForm open={classOpen} handleClickOpen={handleClassOpen} />
       </div>
     </body>

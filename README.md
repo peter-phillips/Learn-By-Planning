@@ -9,7 +9,7 @@ UI Prototype: https://www.figma.com/file/QTPp0eC0nJNWPiUfoGGk6D/Learn-by-Plannin
 
 Development Enviornment Set Up: 
 
-Diagrams:
+Diagrams: https://github.com/peter-phillips/Learn-By-Planning.wiki.git
 
 Travis CI Frontend
 [![Build Status](https://travis-ci.com/peter-phillips/Learn-By-Planning.svg?branch=main)](https://travis-ci.com/peter-phillips/Learn-By-Planning)

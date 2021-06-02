@@ -39,6 +39,7 @@ function Notification(props) {
           )}
         >
           Reminder for 
+          {' '}
           {notifMessages}
         </Alert>
       </Collapse>

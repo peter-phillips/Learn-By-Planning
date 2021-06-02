@@ -32,6 +32,7 @@ function Today() {
   async function fetchAll() {
     try {
       const response = await axios.get('http://localhost:5000/Today');
+      console.log(response.data.tasks);
       return response.data;
     } catch (error) {
       // We're not handling errors. Just logging into the console.
@@ -133,19 +134,14 @@ function Today() {
     console.log('mount called');
     // Updates group data every 10 minutes
     const timer = setTimeout(() => {
-      console.log('timer');
       fetchNotifs().then((result) => {
         if (result.status === 200) {
-          console.log('200-recieved');
           setNotification(result.data.notification);
           setNotifOpen(true);
-        } else if (result.status === 204) {
-          console.log('204-recieved');
-          setNotification([]);
         }
       });
       settimer(!notiftimer);
-    }, 60000);
+    }, 15000);
     return () => {
       clearTimeout(timer);
     };
@@ -184,7 +180,12 @@ function Today() {
           tasks={tasks}
           setTasks={setTasks}
         />
-        <ClassForm open={classOpen} handleClickOpen={handleClassOpen} />
+        <ClassForm
+          open={classOpen}
+          handleClickOpen={handleClassOpen}
+          userClasses={userClasses}
+          setClasses={setClasses}
+        />
       </div>
     </body>
   );

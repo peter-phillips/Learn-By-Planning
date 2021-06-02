@@ -92,6 +92,7 @@ function ClassForm(props) {
           classColor: '',
         });
         handleClickOpen();
+        console.log(userClasses);
         setClasses([...userClasses, result]);
       }
     });

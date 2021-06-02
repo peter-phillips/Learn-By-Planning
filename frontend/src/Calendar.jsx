@@ -1,4 +1,3 @@
-
 import React from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -63,6 +62,7 @@ export default class Calendar extends React.Component {
     console.log(events);
     return (
       <FullCalendar
+        timeZone="local"
         plugins={[dayGridPlugin]}
         initialView="dayGridMonth"
         events={events}

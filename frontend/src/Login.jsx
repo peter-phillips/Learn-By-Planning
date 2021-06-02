@@ -19,7 +19,7 @@ function Login() {
 
   async function checkLogin() {
     try {
-      const response = await axios.get('http://localhost:5000/login');
+      const response = await axios.post('http://localhost:5000/logout');
       return true;
     } catch (error) {
       console.log(error);

@@ -20,6 +20,11 @@ function Today() {
 
   const [tasks, setTasks] = useState([]);
 
+  const newdate = new Date();
+  const todayDate = newdate.toLocaleString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+  });
+
   async function fetchAll() {
     try {
       const response = await axios.get('http://localhost:5000/Today');
@@ -106,6 +111,7 @@ function Today() {
   return (
     <body className={styles.todayBody}>
       <div>
+        <h1 className={styles.title}>{todayDate}</h1>
         <TaskTable tasks={tasks} />
         <div className={styles.buttons}>
           <Button className={classes.task} onClick={handleTaskOpen}>

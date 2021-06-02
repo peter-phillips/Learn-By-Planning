@@ -18,3 +18,7 @@
     width: 200px;
     justify-content: space-evenly;
 }
+
+.title {
+text-align: center;
+}

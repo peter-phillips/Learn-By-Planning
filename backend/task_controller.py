@@ -1,4 +1,5 @@
 """Handles everything to do with tasks"""
+import sys
 from datetime import datetime
 from flask import Blueprint, jsonify, request
 from user import User
@@ -34,6 +35,7 @@ def task_post():
     target_date = args.get('targetDate')
     remind = args.get('remind')
     remind_date = args.get('remindDate')
+    print(target_date, due_date, remind_date, file=sys.stdout)
 
     #finds highest task id
     new_id = tasks.find().sort([("taskId", -1)]).limit(1)[0]["taskId"]
@@ -48,7 +50,7 @@ def task_post():
         due_date = datetime.strptime(due_date, '%Y-%m-%dT%H:%M:%S.%fZ')
 
     cur_task = Task(new_id + 1, user.uid, name, desc, clas,
-            PT.localize(due_date), PT.localize(target_date), remind, PT.localize(remind_date))
+            due_date, target_date, remind, remind_date)
     #inserts new task into mongo
     tasks.insert_one(cur_task.to_mongo())
     res_task = cur_task.to_mongo()
@@ -134,7 +136,7 @@ def today_get():
         resp = jsonify(success=False)
         resp.status_code = 401 #Unauthorized
         return resp
-    current = datetime.now()
+    current = datetime.utcnow()
     start = datetime(current.year, current.month, current.day)
     end = datetime(current.year, current.month, current.day, hour=23, minute=59, second=59)
     today_tasks = tasks.find({"$and":
@@ -152,6 +154,9 @@ def today_get():
     for i in today_tasks:
         i.pop("_id")
         i["isTarget"] = False
+        i["dueDate"] = i.get("dueDate")
+        i["targetDate"] = i.get("targetDate")
+        i["remindDate"] = i.get("remindDate")
         i["color"] = classes.find_one({"$and" :
                                         [{"userId" : user.uid},
                                         {"className" : i.get("class")}]}).get("classColor")
@@ -161,6 +166,9 @@ def today_get():
         if j.get("taskId") not in temp_ids:
             j.pop("_id")
             j["isTarget"] = True
+            j["dueDate"] = j.get("dueDate")
+            j["targetDate"] = j.get("targetDate")
+            j["remindDate"] = j.get("remindDate")
             j["color"] = classes.find_one({"$and" :
                                             [{"userId" : user.uid},
                                             {"className" : j.get("class")}]}).get("classColor")
@@ -218,6 +226,9 @@ def list_get():
     tempclasses = []
     for i in list_tasks:
         i.pop("_id")
+        i["dueDate"] = i.get("dueDate")
+        i["targetDate"] = i.get("targetDate")
+        i["remindDate"] = i.get("remindDate")
         i["color"] = classes.find_one({"$and" :
                                         [{"userId" : user.uid},
                                         {"className" : i.get("class")}]}).get("classColor")
@@ -279,7 +290,7 @@ def get_notification():
         resp = jsonify(success=False)
         resp.status_code = 401 #Unauthorized
         return resp
-    current = datetime.now()
+    current = datetime.utcnow()
     notifs = list(notification.find({"$and" :
                                         [{"userId" : user.uid},
                                         {"remindDate" : {"$lte" : current}}]}))

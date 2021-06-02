@@ -18,6 +18,7 @@ import {
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DateFnsUtils from '@date-io/date-fns';
+import enlocal from 'date-fns/locale/en-US';
 
 function TaskForm(props) {
   const {
@@ -187,8 +188,9 @@ function TaskForm(props) {
               onChange={handleChange}
               fullWidth
             />
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <MuiPickersUtilsProvider utils={DateFnsUtils} locale={enlocal}>
               <DateTimePicker
+                utc
                 name="dueDate"
                 label="Choose Due Date"
                 format="MM-dd-yyyy hh:mm aa"
@@ -196,6 +198,7 @@ function TaskForm(props) {
                 onChange={handleDueDateChange}
               />
               <DateTimePicker
+                utc
                 name="targetDate"
                 label="Choose Target Date"
                 format="MM-dd-yyyy hh:mm aa"
@@ -203,6 +206,7 @@ function TaskForm(props) {
                 onChange={handleTargetDateChange}
               />
               <DateTimePicker
+                utc
                 name="remindDate"
                 label="Choose Remind Date"
                 format="MM-dd-yyyy hh:mm aa"

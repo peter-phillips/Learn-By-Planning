@@ -7,6 +7,10 @@ Learn By Planning is a website for Cal Poly students to use to help themselves s
 
 UI Prototype: https://www.figma.com/file/QTPp0eC0nJNWPiUfoGGk6D/Learn-by-Planning?node-id=164%3A2&frame-preset-name=Desktop
 
+Development Enviornment Set Up: 
+
+Diagrams:
+
 Travis CI Frontend
 [![Build Status](https://travis-ci.com/peter-phillips/Learn-By-Planning.svg?branch=main)](https://travis-ci.com/peter-phillips/Learn-By-Planning)
 

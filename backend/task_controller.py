@@ -3,7 +3,7 @@ import sys
 from datetime import datetime
 from flask import Blueprint, jsonify, request
 from user import User
-from dataBase import DataBase
+from database import DataBase
 from task import Task
 from classes import Classes
 import pytz

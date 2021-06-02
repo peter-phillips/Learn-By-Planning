@@ -9,6 +9,16 @@ UI Prototype: https://www.figma.com/file/QTPp0eC0nJNWPiUfoGGk6D/Learn-by-Plannin
 
 Development Enviornment Set Up: 
 
+frontend terminal:
+
+    npm i
+    npm start
+backend terminal:
+
+     $env:FLASK_ENV = "development"
+     $env:FLASK_APP = "app.py"
+     python -m flask run
+     
 Diagrams: https://github.com/peter-phillips/Learn-By-Planning.wiki.git
 
 Travis CI Frontend

@@ -1,0 +1,9 @@
+.day {
+    display: flex;
+    align-self: center;
+}
+
+.tasks {
+    display: flex;
+    align-self: center;
+}

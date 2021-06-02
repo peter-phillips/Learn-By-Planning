@@ -136,6 +136,7 @@ function List() {
     const comps = [];
     // eslint-disable-next-line no-unused-vars
     tasks.forEach((value, key) => comps.push(<TaskHolder
+      isItToday={false}
       Key={key}
       tasks={value}
       deleteTask={deleteTask}

@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-shadow */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable max-len */
 import React, { useState } from 'react';
@@ -16,9 +18,12 @@ import {
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DateFnsUtils from '@date-io/date-fns';
+import enLocale from 'date-fns/locale/en-US';
 
 function TaskForm(props) {
-  const { open, handleClickOpen, userClasses } = props;
+  const {
+    open, handleClickOpen, userClasses, tasks, setTasks,
+  } = props;
   const [task, setTask] = useState({
     name: '',
     desc: '',
@@ -114,13 +119,35 @@ function TaskForm(props) {
     try {
       const response = await axios.post('http://localhost:5000/Today', newtask);
       if (response.status === 201) {
-        return true;
+        return response.data.task;
       }
       return false;
     } catch (error) {
       console.log(error);
       return false;
     }
+  }
+
+  function addTaskList(newTask) {
+    const updatedTaskList = new Map();
+    tasks.forEach((value, date) => {
+      for (const atask of value) {
+        if (updatedTaskList.has(date)) {
+          updatedTaskList.get(date).push(atask);
+        } else {
+          updatedTaskList.set(date, [atask]);
+        }
+      }
+    });
+    const stringDate = JSON.stringify(newTask.dueDate);
+    const tempDay = stringDate.split(' ');
+    const date = tempDay[1] + tempDay[2] + tempDay[3];
+    if (updatedTaskList.has(date)) {
+      updatedTaskList.get(date).push(newTask);
+    } else {
+      updatedTaskList.set(date, [newTask]);
+    }
+    setTasks(updatedTaskList);
   }
 
   function createTask() {
@@ -135,6 +162,7 @@ function TaskForm(props) {
           remindDate: null,
         });
         resetDates();
+        addTaskList(result);
         handleClickOpen();
       }
     });
@@ -160,7 +188,7 @@ function TaskForm(props) {
               onChange={handleChange}
               fullWidth
             />
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <MuiPickersUtilsProvider utils={DateFnsUtils} locale={enLocale}>
               <DateTimePicker
                 name="dueDate"
                 label="Choose Due Date"

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
-// import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import Taskform from './TaskForm';
 import ClassForm from './ClassForm';
-// import TaskHolder from './TaskHolder';
+import TaskHolder from './TaskHolder';
 import TaskTable from './TaskTable';
 import styles from './Today.module.css';
 
@@ -18,7 +17,7 @@ function Today() {
 
   const [userClasses, setClasses] = useState([]);
 
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState(new Map());
 
   const newdate = new Date();
   const todayDate = newdate.toLocaleString('en-US', {
@@ -50,6 +49,13 @@ function Today() {
       }
     }
     return cleanObjects;
+  }
+
+  function getTodayKey() {
+    const day = new Date();
+    const dayString = day.toDateString().split(' ');
+    const todayKey = dayString[2] + dayString[1] + dayString[3];
+    return todayKey;
   }
 
   const useStyles = makeStyles({
@@ -112,7 +118,10 @@ function Today() {
     <body className={styles.todayBody}>
       <div>
         <h1 className={styles.title}>{todayDate}</h1>
-        <TaskTable tasks={tasks} />
+        <div className={styles.mainScreen}>
+          <TaskTable tasks={tasks} />
+          <TaskHolder isItToday tasks={tasks.get(getTodayKey(todayDate))} />
+        </div>
         <div className={styles.buttons}>
           <Button className={classes.task} onClick={handleTaskOpen}>
             +

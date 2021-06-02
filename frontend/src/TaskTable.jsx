@@ -46,7 +46,7 @@ function TaskTable(props) {
   }
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} style={{ paddingTop: 8, paddingLeft: 5, paddingRight: 5 }}>
       <Table className={classes.table} aria-label="simple table">
         <TableHead style={{ backgroundColor: '#154734', color: 'white', fontSize: '20' }}>
           <TableRow>

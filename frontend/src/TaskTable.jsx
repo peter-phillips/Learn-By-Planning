@@ -23,6 +23,7 @@ const useStyles = makeStyles({
 
 function TaskTable(props) {
   const { tasks } = props;
+  console.log(tasks);
   const classes = useStyles();
   function renderTaskRows() {
     const comps = [];

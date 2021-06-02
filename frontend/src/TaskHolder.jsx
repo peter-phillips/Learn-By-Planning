@@ -4,7 +4,9 @@ import Card from '@material-ui/core/Card';
 import IndividualTask from './IndividualTask';
 
 function TaskHolder(props) {
-  const { tasks } = props;
+  const {
+    Key, tasks, deleteTask, isItToday,
+  } = props;
 
   const toLocalDate = (unformatedDate) => {
     // eslint-disable-next-line radix
@@ -39,6 +41,19 @@ function TaskHolder(props) {
     return time;
   };
 
+  function renderTasks() {
+    if (tasks == null || tasks.length === 0) {
+      return <p>Nothing due today!</p>;
+    }
+    return tasks.map((task) => (
+      <IndividualTask
+        Key={Key}
+        task={task}
+        deleteTask={deleteTask}
+      />
+    ));
+  }
+
   return (
     <Grid
       container
@@ -51,9 +66,9 @@ function TaskHolder(props) {
         minHeight: 50, backgroundColor: '#154734', color: 'white', fontSize: 28, display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 5, marginTop: 10, width: '99%',
       }}
       >
-        {toLocalDate(tasks[0].dueDate)}
+        {isItToday ? 'Due Today' : toLocalDate(tasks[0].dueDate)}
       </Card>
-      {tasks.map((task) => <IndividualTask task={task} />)}
+      {renderTasks()}
     </Grid>
   );
 }

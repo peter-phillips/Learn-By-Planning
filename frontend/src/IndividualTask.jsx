@@ -4,6 +4,10 @@ import Collapse from '@material-ui/core/Collapse';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 import styles from './IndividualTask.module.css';
 
 const useStyles = makeStyles((theme) => ({
@@ -33,14 +37,14 @@ const toLocalDate = (unformatedDate) => {
 };
 
 function IndividualTask(props) {
-  const { task } = props;
-  console.log(task);
+  const { task, deleteTask } = props;
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
   return (
     <div className={styles.ListTasks}>
       <Card
@@ -53,12 +57,30 @@ function IndividualTask(props) {
           margin: 5,
           backgroundColor: task.color.hex,
         }}
-        className={clsx(classes.expand, {
-          [classes.expandOpen]: expanded,
-        })}
-        onClick={handleExpandClick}
+        // className={clsx(classes.expand, {
+        //   [classes.expandOpen]: expanded,
+        // })}
+        // onClick={handleExpandClick}
       >
         {task.name}
+        <CardActions disableSpacing>
+          <IconButton
+            className={clsx(classes.expand, {
+              [classes.expandOpen]: expanded,
+            })}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+          >
+            <ExpandMoreIcon />
+          </IconButton>
+          <IconButton
+            onClick={() => deleteTask(task.taskId)}
+            aria-label="delete task"
+          >
+            <DeleteIcon />
+          </IconButton>
+        </CardActions>
       </Card>
       <Collapse
         style={{

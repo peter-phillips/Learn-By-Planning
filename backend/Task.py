@@ -1,5 +1,5 @@
 """represents a task in the database"""
-from database import DataBase
+from dataBase import DataBase
 # pylint: disable=too-many-instance-attributes
 # pylint: disable=too-many-arguments
 class Task():

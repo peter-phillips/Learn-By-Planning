@@ -1,7 +1,7 @@
 """Creates backend flask application"""
 from flask import Flask
 from flask_login import LoginManager
-from database import DataBase
+from dataBase import DataBase
 from flask_cors import CORS
 from user import User
 from auth import auth as auth_blueprint

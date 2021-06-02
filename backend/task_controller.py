@@ -2,14 +2,16 @@
 from datetime import datetime
 from flask import Blueprint, jsonify, request
 from user import User
-from database import DataBase
+from dataBase import DataBase
 from task import Task
 from classes import Classes
+import pytz
 
 task = Blueprint('task', __name__)
 tasks = DataBase.get_tasks()
 classes = DataBase.get_classes()
 notification = DataBase.get_notifications()
+PT = pytz.timezone('US/Pacific')
 
 #Create a task
 @task.route('/Today', methods=['POST'])
@@ -46,7 +48,7 @@ def task_post():
         due_date = datetime.strptime(due_date, '%Y-%m-%dT%H:%M:%S.%fZ')
 
     cur_task = Task(new_id + 1, user.uid, name, desc, clas,
-            due_date, target_date, remind, remind_date)
+            PT.localize(due_date), PT.localize(target_date), remind, PT.localize(remind_date))
     #inserts new task into mongo
     tasks.insert_one(cur_task.to_mongo())
     res_task = cur_task.to_mongo()

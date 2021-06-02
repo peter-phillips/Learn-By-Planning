@@ -5,10 +5,8 @@ python:
 install:
   - pip install -r requirements.txt
 
-before_script:
-  - cd backend
 script:
-  - pytest test_user.py
+  - pytest backend
 
 
  

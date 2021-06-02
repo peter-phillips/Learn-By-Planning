@@ -1,9 +1,15 @@
-language: node_js
-node:
-  - "14.15"
-before_install:
-  - cd frontend
+language: python
+python:
+  - "3.6"
+  - "3.7"
 install:
+<<<<<<< HEAD
+  - pip install -r requirements.txt
+
+script:
+  - pytest backend
+
+=======
   - npm ci
 script:
   - npm run lint
@@ -13,6 +19,7 @@ script:
 #   - "3.7"
 # install:
 #   - pip install -r requirements.txt
+>>>>>>> main
 
 # before_script:
 #   - cd backend

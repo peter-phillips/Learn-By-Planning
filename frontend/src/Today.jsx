@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import Taskform from './TaskForm';
 import ClassForm from './ClassForm';
 import TaskHolder from './TaskHolder';
+import TaskTable from './TaskTable';
 import styles from './Today.module.css';
+import useDidMountEffect from './useDidMountEffect';
+import Notification from './Notification';
 
 function Today() {
+  const [notiftimer, settimer] = useState(false);
   const [taskOpen, settaskOpen] = useState(false);
   const handleTaskOpen = () => { settaskOpen(!taskOpen); };
 
@@ -16,8 +19,15 @@ function Today() {
   const handleClassOpen = () => { setclassOpen(!classOpen); };
 
   const [userClasses, setClasses] = useState([]);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notification, setNotification] = useState([]);
 
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState(new Map());
+
+  const newdate = new Date();
+  const todayDate = newdate.toLocaleString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+  });
 
   async function fetchAll() {
     try {
@@ -46,37 +56,33 @@ function Today() {
     return cleanObjects;
   }
 
-  function renderTaskHolders() {
-    const comps = [];
-    // eslint-disable-next-line no-unused-vars
-    tasks.forEach((value, key) => comps.push(<TaskHolder Key={key} tasks={value} />));
-    return comps;
+  function getTodayKey() {
+    const day = new Date();
+    const dayString = day.toDateString().split(' ');
+    const todayKey = dayString[2] + dayString[1] + dayString[3];
+    return todayKey;
   }
 
   const useStyles = makeStyles({
     task: {
       fontSize: 60,
       color: 'white',
-      backgroundColor: '#BD8B13',
+      backgroundColor: '#ffbb17',
       height: 70,
       width: 70,
       borderRadius: '50%',
-      opacity: 0.6,
       '&:hover': {
         backgroundColor: '#BD8B13',
-        opacity: 1,
       },
     },
     class: {
       fontSize: 12,
       color: 'white',
-      backgroundColor: '#BD8B13',
+      backgroundColor: '#ffbb17',
       height: 70,
       width: 100,
-      opacity: 0.6,
       '&:hover': {
         backgroundColor: '#BD8B13',
-        opacity: 1,
       },
       root: {
         display: 'flex',
@@ -112,20 +118,72 @@ function Today() {
     });
   }, []);
 
+  async function fetchNotifs() {
+    try {
+      console.log('fetch');
+      const response = await axios.get('http://localhost:5000/Notification');
+      console.log(response.data.notification);
+      return response;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+  useDidMountEffect(() => {
+    console.log('mount called');
+    // Updates group data every 10 minutes
+    const timer = setTimeout(() => {
+      console.log('timer');
+      fetchNotifs().then((result) => {
+        if (result.status === 200) {
+          console.log('200-recieved');
+          setNotification(result.data.notification);
+          setNotifOpen(true);
+        } else if (result.status === 204) {
+          console.log('204-recieved');
+          setNotification([]);
+        }
+      });
+      settimer(!notiftimer);
+    }, 60000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [notiftimer]);
+
+  useEffect(() => {
+    settimer(!notiftimer);
+  }, []);
+
   const classes = useStyles();
   return (
     <body className={styles.todayBody}>
       <div>
-        <Grid container classes={{ container: classes.container }}>
-          {renderTaskHolders()}
-        </Grid>
-        <Button className={classes.task} onClick={handleTaskOpen}>
-          +
-        </Button>
-        <Taskform userClasses={userClasses} open={taskOpen} handleClickOpen={handleTaskOpen} />
-        <Button className={classes.class} onClick={handleClassOpen}>
-          Add A Class
-        </Button>
+        <Notification
+          notifMessages={notification}
+          notifSetOpen={setNotifOpen}
+          notifOpen={notifOpen}
+        />
+        <h1 className={styles.title}>{todayDate}</h1>
+        <div className={styles.mainScreen}>
+          <TaskTable tasks={tasks} />
+          <TaskHolder isItToday tasks={tasks.get(getTodayKey(todayDate))} />
+        </div>
+        <div className={styles.buttons}>
+          <Button className={classes.task} onClick={handleTaskOpen}>
+            +
+          </Button>
+          <Button className={classes.class} onClick={handleClassOpen}>
+            Add A Class
+          </Button>
+        </div>
+        <Taskform
+          userClasses={userClasses}
+          open={taskOpen}
+          handleClickOpen={handleTaskOpen}
+          tasks={tasks}
+          setTasks={setTasks}
+        />
         <ClassForm open={classOpen} handleClickOpen={handleClassOpen} />
       </div>
     </body>

@@ -105,7 +105,6 @@ function List() {
         }
       }
     });
-    console.log(updatedTaskList);
     setTasks(updatedTaskList);
   }
 

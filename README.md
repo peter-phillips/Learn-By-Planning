@@ -1,6 +1,9 @@
 # Learn-By-Planning
 CSC-307 Group Project
 
+Learn By Planning is a website for Cal Poly students to use to help themselves stay organized and on top of their work created by Geezer Bar. Students can add ‘tasks’ which can be really anything assignment or event they have that is associated with a class that they are taking. They can have both target and due dates, Target dates are the dates that they would ideally have the assignment done by while Due dates are the actual deadline assigned. There are three ways that you can view your tasks: In a calendar, a list or just the tasks for today.
+
+
 Travis CI Frontend
 [![Build Status](https://travis-ci.com/peter-phillips/Learn-By-Planning.svg?branch=main)](https://travis-ci.com/peter-phillips/Learn-By-Planning)
 

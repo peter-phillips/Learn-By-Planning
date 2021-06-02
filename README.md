@@ -8,7 +8,14 @@ Learn By Planning is a website for Cal Poly students to use to help themselves s
 UI Prototype: https://www.figma.com/file/QTPp0eC0nJNWPiUfoGGk6D/Learn-by-Planning?node-id=164%3A2&frame-preset-name=Desktop
 
 Development Enviornment Set Up: 
-
+  frontend terminal: 
+    npm i
+    npm start
+  backend terminal:
+     $env:FLASK_ENV = "development"
+     $env:FLASK_APP = "app.py"
+     python -m flask run
+     
 Diagrams: https://github.com/peter-phillips/Learn-By-Planning.wiki.git
 
 Travis CI Frontend

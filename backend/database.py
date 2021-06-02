@@ -8,7 +8,7 @@ class DataBase:
 
     # disabling pylint for MONGODB_URI being invalid
     # pylint: disable=invalid-name
-    load_dotenv('./dataBaseAccess.env')
+    load_dotenv()
     MONGODB_URI = os.getenv('MONGODB_URI')
     client = pymongo.MongoClient(host=MONGODB_URI)
     db = client.LearnByPlanning

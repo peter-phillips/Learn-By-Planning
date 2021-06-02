@@ -164,7 +164,6 @@ function Today() {
           notifSetOpen={setNotifOpen}
           notifOpen={notifOpen}
         />
-
         <h1 className={styles.title}>{todayDate}</h1>
         <div className={styles.mainScreen}>
           <TaskTable tasks={tasks} />
